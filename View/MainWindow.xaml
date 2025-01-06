@@ -8,7 +8,21 @@
         d:DataContext="{d:DesignInstance Type=viewModel:BaseViewModel}"
         mc:Ignorable="d"
         Title="Wayfinder" Height="1080" Width="1920">
-    <Grid>
-        
-    </Grid>
+    <DockPanel>
+        <Button Click="Button_Click" Background="Aqua" DockPanel.Dock="Bottom" Height="200">Test</Button>
+        <Border Background="Aqua" DockPanel.Dock="Right" BorderThickness="2" BorderBrush="Aqua" Width="100"></Border>
+
+        <ScrollViewer HorizontalScrollBarVisibility="auto"
+                      VerticalScrollBarVisibility="auto"
+                      Padding="10">
+            <Image x:Name="Landscape"
+                   SnapsToDevicePixels="True"
+                   MouseDown="Landscape_MouseDown">
+                <Image.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"></ScaleTransform>
+                </Image.LayoutTransform>
+            </Image>
+        </ScrollViewer>
+
+    </DockPanel>
 </Window>
