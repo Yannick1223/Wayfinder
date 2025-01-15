@@ -12,20 +12,17 @@ namespace Wayfinder.Model
 {
     public class LandscapeRenderer
     {
-        public LandscapeRenderer(int _row, int _column)
+        public LandscapeRenderer(int _row, int _column, int _tileWidth, int _tileHeight, int _borderThickness)
         {
             LandscapeRow = _row;
             LandscapeColumn = _column;
-
-            //Default Settings
-            LandscapeTileWidth = 32;
-            LandscapeTileHeight = 32;
-
-            OutlineThickness = 2;
-
+            LandscapeTileWidth = _tileWidth;
+            LandscapeTileHeight = _tileHeight;
+            BorderThickness = _borderThickness;
             CalculateImageSize();
 
             Landscape = CreateLandscapeBitmap(ImageWidth, ImageHeight);
+            DrawLandscapeOutline();
         }
 
         public WriteableBitmap Landscape { get; private set; }
@@ -41,10 +38,15 @@ namespace Wayfinder.Model
         public int LandscapeRow { get; private set; }
         public int LandscapeColumn { get; private set; }
 
-        public int OutlineThickness { get; private set; }
+        public int BorderThickness { get; private set; } //TODO: Change OutlineThickness to Border Thickness
+        //public int OutlineThickness { get; private set; }
 
         private WriteableBitmap CreateLandscapeBitmap(int _width, int _height)
         {
+            if (_width > MathF.Pow(2, 15) ||  _height > MathF.Pow(2, 15))
+            {
+                throw new Exception("To large Image");
+            }
             return BitmapFactory.New(_width, _height);
         }
 
@@ -56,6 +58,23 @@ namespace Wayfinder.Model
             CalculateImageSize();
         }
 
+        public void DrawLandscapeOutline()
+        {
+            if (BorderThickness > 0)
+            {
+                DrawBorder();
+            }
+        }
+
+        private void DrawBorder()
+        {
+            for (int thickness = 0; thickness < BorderThickness; thickness++)
+            {
+                DrawRectangle(thickness, thickness, ImageWidth - thickness - 1, ImageHeight - thickness - 1, Colors.Black);
+            }
+        }
+
+        //Remove
         public void SetTileSize(int _width, int _height)
         {
             if(_width < 0 || _height < 0)
@@ -69,21 +88,59 @@ namespace Wayfinder.Model
             CalculateImageSize();
         }
 
-        public void SetOutlineThickness(int _thickness)
-        {
-            OutlineThickness = _thickness;
-
-            CalculateImageSize();
-        }
-
         public void CalculateImageSize()
         {
-            //All Tile Pixel + Border/Edge + between + Tile Pixel Border
-            ImageWidth = LandscapeRow * LandscapeTileWidth + (LandscapeRow - 1) * OutlineThickness + 2 * OutlineThickness;
-            ImageHeight = LandscapeColumn * LandscapeTileHeight + (LandscapeColumn - 1) * OutlineThickness + 2 * OutlineThickness;
+            // All Tiles + 2 * Border
+            ImageWidth = LandscapeRow * LandscapeTileWidth + 2 * BorderThickness;
+            ImageHeight = LandscapeColumn * LandscapeTileHeight + 2 * BorderThickness;
         }
 
+        public Point GetTileStartPosition(int _row, int _col)
+        {
+            if (_row <= 0 || _col <= 0)
+            {
+                throw new ArgumentException("row or col can't be below 1");
+            }
 
+            return new Point(_row * LandscapeTileWidth + BorderThickness - LandscapeTileWidth, _col * LandscapeTileHeight + BorderThickness - LandscapeTileHeight);
+        }
+
+        public Point GetTileEndPosition(int _row, int _col)
+        {
+            if (_row <= 0 || _col <= 0)
+            {
+                throw new ArgumentException("row or col can't be below 1");
+            }
+
+            Point startPosition = GetTileStartPosition(_row, _col);
+            return new Point(startPosition.X + LandscapeTileWidth, startPosition.Y + LandscapeTileHeight);
+        }
+
+        public Point? GetTileFromPosition(int _x, int _y)
+        {
+            Point? result = null;
+            int? tileRow = null;
+            int? tileCol = null;
+            if (!IsXPositionInsideBorder(_x) || !IsYPositionInsideBorder(_y)) return result;
+
+            tileRow = (ImageWidth - 2 * BorderThickness - (ImageWidth - _x)) / LandscapeTileWidth;
+            tileCol = (ImageHeight - 2 * BorderThickness -(ImageWidth - _y)) / LandscapeTileHeight;
+            result = new Point((int)tileRow + 1, (int)tileCol + 1);
+
+            return result;
+        }
+
+        private bool IsXPositionInsideBorder(int _x)
+        {
+            return _x > BorderThickness && _x <= ImageWidth - BorderThickness;
+        }
+
+        private bool IsYPositionInsideBorder(int _y)
+        {
+            return _y > BorderThickness && _y <= ImageHeight - BorderThickness;
+        }
+
+        //Drawing Functions
         public void DrawPixel(int _x, int _y, Color _color)
         {
             using (Landscape.GetBitmapContext())
@@ -107,7 +164,6 @@ namespace Wayfinder.Model
 
         public void DrawVerticalLine(int _y1, int _y2, int _x1, Color _color)
         {
-
             DrawLine(_x1, _y1, _x1, _y2, _color);
         }
 
@@ -132,54 +188,7 @@ namespace Wayfinder.Model
             DrawFillRectangle((int)from.X, (int)from.Y, (int)to.X, (int)to.Y, _color);
         }
 
-        public void DrawLandscapeOutline()
-        {
-            if(OutlineThickness > 0)
-            {
-                DrawBorder();
-                DrawHorizontalOutlines();
-                DrawVertícalOutlines();
-            }
-        }
-
-        private void DrawBorder()
-        {
-
-            for(int thickness = 0; thickness < OutlineThickness; thickness++)
-            {
-                DrawRectangle(thickness, thickness, ImageWidth - thickness - 1, ImageHeight - thickness - 1, Colors.Black);
-            }
-        }
-
-        private void DrawHorizontalOutlines()
-        {
-            using (Landscape.GetBitmapContext())
-            {
-                for(int y = 1; y < LandscapeColumn; y++)
-                {
-                    Point startPosition = new Point(0, y * LandscapeTileWidth + y * OutlineThickness);
-                    Point endPosition = new Point(ImageWidth, y * LandscapeTileWidth + y * OutlineThickness + OutlineThickness);
-
-                    DrawFillRectangle(startPosition, endPosition, Colors.Black);
-                }
-            }
-        }
-
-        private void DrawVertícalOutlines()
-        {
-            using (Landscape.GetBitmapContext())
-            {
-                for (int x = 1; x < LandscapeRow; x++)
-                {
-                    Point startPosition = new Point(x * LandscapeTileHeight + x * OutlineThickness, 0);
-                    Point endPosition = new Point(x * LandscapeTileWidth + x * OutlineThickness + OutlineThickness, ImageWidth);
-
-                    DrawFillRectangle(startPosition, endPosition, Colors.Black);
-                }
-            }
-        }
-
-        public void DrawColorTile(int _row, int _col, Color _color)
+        public void DrawColorAtTile(int _row, int _col, Color _color)
         {
             if(_row <= 0 || _col <= 0)
             {
@@ -188,13 +197,11 @@ namespace Wayfinder.Model
 
             using (Landscape.GetBitmapContext())
             {
-                Point startTile = new Point(_row * LandscapeTileWidth + (_row - 1) * OutlineThickness + OutlineThickness - LandscapeTileWidth, _col * LandscapeTileHeight + (_col - 1) * OutlineThickness + OutlineThickness - LandscapeTileHeight);
-                Point endTile = new Point(startTile.X + LandscapeTileWidth, startTile.Y + LandscapeTileHeight);
-
-                DrawFillRectangle(startTile, endTile, _color);
+                DrawFillRectangle(GetTileStartPosition(_row, _col), GetTileEndPosition(_row, _col), _color);
             }
         }
 
+        // Optimize later/ or find a function
         public void DrawImageAtTile(int _row, int _col, WriteableBitmap _image)
         {
             if (_row <= 0 || _col <= 0)
@@ -202,17 +209,25 @@ namespace Wayfinder.Model
                 throw new ArgumentException("row or col can't be below 1");
             }
 
+            if (_image == null)
+            {
+                throw new Exception("Image is null");
+            }
+
+            if(_image.PixelHeight != LandscapeTileHeight || _image.PixelWidth != LandscapeTileWidth)
+            {
+                throw new Exception("Image has wrong size. Expected: " + LandscapeTileWidth + "*" + LandscapeTileHeight);
+            }
+
             using (Landscape.GetBitmapContext())
             {
-                //Point startTile = new Point(_row * LandscapeTileWidth + (_row - 1) * OutlineThickness + OutlineThickness - LandscapeTileWidth, _col * LandscapeTileHeight + (_col - 1) * OutlineThickness + OutlineThickness - LandscapeTileHeight);
-                //Point endTile = new Point(startTile.X + LandscapeTileWidth, startTile.Y + LandscapeTileHeight);
+                Point startTile = GetTileStartPosition(_row, _col);
 
-                //Point startTile = new Point(2, 2);
-
-                //Landscape.Blit(startTile, _image, new Rect(0, 0, 32, 32), Colors.White, WriteableBitmapExtensions.BlendMode.None);
+                Landscape.Blit(startTile, _image, new Rect(0, 0, _image.PixelWidth, _image.PixelHeight), Color.FromArgb(255, 255, 255, 255), WriteableBitmapExtensions.BlendMode.None);
             }
         }
 
+        //Edit function or Remove
         public void DrawImageTileAtPosition(int _x1, int _y1, WriteableBitmap _image)
         {
             using (Landscape.GetBitmapContext())

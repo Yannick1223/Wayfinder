@@ -6,11 +6,27 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Grass.jpg" />
+    <None Remove="Assets\Land.jpg" />
+    <None Remove="Assets\Sand.jpg" />
+    <None Remove="Assets\Water.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="WriteableBitmapEx" Version="1.6.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Grass.jpg" />
+    <Resource Include="Assets\Land.jpg" />
+    <Resource Include="Assets\Sand.jpg" />
+    <Resource Include="Assets\Water.jpg" />
   </ItemGroup>
 
 </Project>

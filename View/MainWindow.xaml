@@ -1,25 +1,55 @@
 ﻿<Window x:Class="Wayfinder.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wayfinder"
         xmlns:viewModel="clr-namespace:Wayfinder.ViewModel"
-        d:DataContext="{d:DesignInstance Type=viewModel:BaseViewModel}"
+        d:DataContext="{d:DesignInstance Type=viewModel:LandscapeViewModel}"
         mc:Ignorable="d"
         Title="Wayfinder" Height="1080" Width="1920">
     <DockPanel>
-        <Button Click="Button_Click" Background="Aqua" DockPanel.Dock="Bottom" Height="200">Test</Button>
-        <Border Background="Aqua" DockPanel.Dock="Right" BorderThickness="2" BorderBrush="Aqua" Width="100"></Border>
+        <Button Background="Gray" DockPanel.Dock="Bottom" Height="200">Test</Button>
+
+
+        <ListBox x:Name="TileSelection" 
+         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+         DockPanel.Dock="Right"
+         SelectionMode="Single"
+         ItemsSource="{Binding ObservableTileInformation}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="2" VerticalAlignment="Top"  />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Name}" Height="25" Width="100" TextAlignment="Center" FontSize="15"></TextBlock>
+                        <Image x:Name="Tiles" 
+                               Source="{Binding Location}" 
+                               Width="100" 
+                               Height="100"
+                               SnapsToDevicePixels="True"></Image>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <ScrollViewer HorizontalScrollBarVisibility="auto"
                       VerticalScrollBarVisibility="auto"
                       Padding="10">
             <Image x:Name="Landscape"
-                   SnapsToDevicePixels="True"
-                   MouseDown="Landscape_MouseDown">
+                   SnapsToDevicePixels="True">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="MouseMove">
+                        <behaviors:InvokeCommandAction Command="{Binding MouseMoveOverImageCommand}"
+                               PassEventArgsToCommand="True"/>
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
                 <Image.LayoutTransform>
-                    <ScaleTransform ScaleX="2" ScaleY="2"></ScaleTransform>
+                    <ScaleTransform ScaleX="6" ScaleY="6"></ScaleTransform>
                 </Image.LayoutTransform>
             </Image>
         </ScrollViewer>
