@@ -18,8 +18,15 @@ namespace Wayfinder.Model
 
     public class Tile
     {
-        public int X {  get; set; }
+        public int X { get; set; }
         public int Y { get; set; }
         public TileType Type { get; set; }
+        public int Cost { get; set; }
+
+
+        public Tile()
+        {
+
+        }
     }
 }

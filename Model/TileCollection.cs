@@ -8,26 +8,32 @@ namespace Wayfinder.Model
 {
     public class TileCollection
     {
-        public List<TileInformation> Information { get; set; }
+        public List<TileInformation> Information { get; private set; }
 
         public TileCollection()
         {
             Information = new List<TileInformation>();
         }
 
-        public void AddNewTile(TileInformation tileInformation)
+        public void AddTile(TileInformation _tileInformation)
         {
-            Information.Add(tileInformation);
+            Information.Add(_tileInformation);
+        }
+
+        public void AddTiles(TileInformation[] _tilesInformation)
+        {
+            Information.AddRange(_tilesInformation);
         }
 
         public TileInformation? GetTileInformation(TileType _type)
         {
             TileInformation? tile = null;
-            foreach (TileInformation item in Information)
+            foreach (TileInformation info in Information)
             {
-                if(item.Type == _type)
+                if(info.Type.Equals(_type))
                 {
-                    tile = item;
+                    tile = info;
+                    break;
                 }
             }
 

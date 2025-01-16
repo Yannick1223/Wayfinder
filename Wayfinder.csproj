@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Endpoint.jpg" />
     <None Remove="Assets\Grass.jpg" />
     <None Remove="Assets\Land.jpg" />
     <None Remove="Assets\Sand.jpg" />
@@ -23,9 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Endpoint.jpg" />
     <Resource Include="Assets\Grass.jpg" />
     <Resource Include="Assets\Land.jpg" />
     <Resource Include="Assets\Sand.jpg" />
+    <Resource Include="Assets\Startpoint.jpg" />
     <Resource Include="Assets\Water.jpg" />
   </ItemGroup>
 

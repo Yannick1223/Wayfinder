@@ -9,11 +9,6 @@ namespace Wayfinder.ViewModel
 {
     public partial class BaseViewModel: ObservableObject
     {
-        public BaseViewModel()
-        {
-            Title = "";
-        }
-
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         bool isBusy;
@@ -21,5 +16,10 @@ namespace Wayfinder.ViewModel
         string title;
 
         public bool IsNotBusy => !IsBusy;
+
+        public BaseViewModel()
+        {
+            Title = "";
+        }
     }
 }

@@ -8,20 +8,36 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Navigation;
 using Wayfinder.Model;
 
 namespace Wayfinder.ViewModel
 {
     public partial class LandscapeViewModel: BaseViewModel
     {
+        public LandscapeHandler Handler { get; private set; }
+        public Image Landscape { get; private set; }
+
+        public ObservableCollection<TileInformation> ObservableTileInformation { get; private set; }
+
+        private ListBox SelectedItem { get; set; }
+
         public LandscapeViewModel()
         {
             Title = "Wayfinder";
-            
-            ObservableTileInformation = new ObservableCollection<TileInformation>();
-            Handler = new LandscapeHandler(100, 100, 8, 8, 1); //TODO: Change width, height to 16
 
-            InitObservableTileInformation();
+            Handler = new LandscapeHandler(100, 100, 8, 8, 1);
+            ObservableTileInformation = new ObservableCollection<TileInformation>();
+
+            UpdateObservableSelection();
+        }
+
+        public void UpdateObservableSelection()
+        {
+            foreach (TileInformation tile in Handler.GetObservableTiles())
+            {
+                ObservableTileInformation.Add(tile);
+            }
         }
 
         public void SetTileSelection(ListBox _selection)
@@ -29,80 +45,73 @@ namespace Wayfinder.ViewModel
             SelectedItem = _selection;
         }
 
-        public void InitObservableTileInformation()
-        {
-            ObservableCollection<TileInformation> tiles = Handler.GetObservableTiles();
-
-            foreach(TileInformation tile in tiles)
-            {
-                ObservableTileInformation.Add(tile);
-            }
-        }
-
-        public LandscapeHandler Handler { get; private set; }
-        public Image Landscape { get; private set; }
-
-        public ObservableCollection<TileInformation> ObservableTileInformation { get; set; }
-
-        public ListBox SelectedItem;
-
         public void SetLandscapeImage(Image _landscape)
         {
             Landscape = _landscape;
             SetLandscapeToImageControl();
         }
 
-        public void SetLandscapeToImageControl()
+        private void SetLandscapeToImageControl()
         {
             Landscape.Source = Handler.Renderer.Landscape;
         }
 
 
         [RelayCommand]
-        public void OnMouseMoveOverImage(MouseEventArgs e)
+        public void OnHoverOverImage(MouseEventArgs e)
         {
-            
-            if (e.LeftButton.Equals(MouseButtonState.Pressed))
+            DrawTile(e);
+        }
+
+        private void DrawTile(MouseEventArgs e)
+        {
+            if (PressedLeftButton(e))
             {
-                OnClickedLandscape(e);
+                DrawTileAtMousePosition(e, GetCurentSelectedTile());
+            }
+            else if (PressedRightButton(e))
+            {
+                DrawTileAtMousePosition(e, TileType.Water);
             }
         }
 
-
-        public void OnClickedLandscape(MouseEventArgs e)
+        private void DrawTileAtMousePosition(MouseEventArgs e, TileType? _type)
         {
-            Point mousePosition = e.GetPosition(Landscape);
+            Point imagePos = MousePositionToImagePosition(e);
+            Point? tilePos = ImagePositionToTilePosition(imagePos);
 
-            double scaleX = Landscape.ActualWidth / Landscape.Source.Width;
-            double scaleY = Landscape.ActualHeight / Landscape.Source.Height;
-
-            int imageX = (int)(mousePosition.X / scaleX) + 1;
-            int imageY = (int)(mousePosition.Y / scaleY) + 1;
-
-            //MessageBox.Show($"Die angeklickte Pixelposition im Bild ist: X={imageX}, Y={imageY}");
-
-            Point? tilePos = Handler.GetTileFromPosition(imageX, imageY);
-
-            if (tilePos != null)
+            if(tilePos != null && _type != null)
             {
-                TileType? currentSelectedTile = GetCurentSelectedTile();
-
-                if(currentSelectedTile != null)
-                {
-                    Handler.DrawTileAtPosition((int)tilePos.Value.X, (int)tilePos.Value.Y, currentSelectedTile.Value);
-                }
-
-                //MessageBox.Show($"Die angeklickte TilePosition im Bild ist: row={tilePos.Value.X}, col={tilePos.Value.Y}");
+                Handler.DrawTileAtPosition((int)tilePos.Value.X, (int)tilePos.Value.Y, _type.Value);
             }
+        }
+
+        private Point MousePositionToImagePosition(MouseEventArgs e)
+        {
+            Point mousePos = e.GetPosition(Landscape);
+            Point imageScale = new Point(Landscape.ActualWidth / Landscape.Source.Width, Landscape.ActualHeight / Landscape.Source.Height);
+
+            return new Point((int)(mousePos.X / imageScale.X) + 1, (int)(mousePos.Y / imageScale.Y) + 1);
+        }
+
+        private Point? ImagePositionToTilePosition(Point _imagePos)
+        {
+            return Handler.GetTileFromPosition(_imagePos);
         }
 
         private TileType? GetCurentSelectedTile()
         {
-            TileType? result = null;
+            return (SelectedItem.SelectedItem as TileInformation)?.Type;
+        }
 
-            result = (SelectedItem.SelectedItem as TileInformation)?.Type;
+        private bool PressedLeftButton(MouseEventArgs e)
+        {
+            return e.LeftButton.Equals(MouseButtonState.Pressed);
+        }
 
-            return result;
+        private bool PressedRightButton(MouseEventArgs e)
+        {
+            return e.RightButton.Equals(MouseButtonState.Pressed);
         }
     }
 }

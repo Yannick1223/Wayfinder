@@ -8,7 +8,7 @@
         xmlns:viewModel="clr-namespace:Wayfinder.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewModel:LandscapeViewModel}"
         mc:Ignorable="d"
-        Title="Wayfinder" Height="1080" Width="1920">
+        Title="{Binding Title}" Height="1080" Width="1920">
     <DockPanel>
         <Button Background="Gray" DockPanel.Dock="Bottom" Height="200">Test</Button>
 
@@ -40,12 +40,16 @@
         <ScrollViewer HorizontalScrollBarVisibility="auto"
                       VerticalScrollBarVisibility="auto"
                       Padding="10">
-            <Image x:Name="Landscape"
+            <Image x:Name="Landscape" 
                    SnapsToDevicePixels="True">
                 <behaviors:Interaction.Triggers>
                     <behaviors:EventTrigger EventName="MouseMove">
-                        <behaviors:InvokeCommandAction Command="{Binding MouseMoveOverImageCommand}"
+                        <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
                                PassEventArgsToCommand="True"/>
+                    </behaviors:EventTrigger>
+                    <behaviors:EventTrigger EventName="MouseDown">
+                        <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
+                                PassEventArgsToCommand="True"/>
                     </behaviors:EventTrigger>
                 </behaviors:Interaction.Triggers>
                 <Image.LayoutTransform>

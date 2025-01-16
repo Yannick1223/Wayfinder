@@ -10,7 +10,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Wayfinder.ViewModel;
-using Wayfinder.Model; //TODO: in ViewModel integrieren
+using Wayfinder.Model;
 
 namespace Wayfinder
 {
@@ -19,26 +19,38 @@ namespace Wayfinder
     /// </summary>
     public partial class MainWindow : Window
     {
+        private LandscapeViewModel LandscapeVM;
+
         public MainWindow()
         {
             LandscapeVM = new LandscapeViewModel();
             DataContext = LandscapeVM;
             InitializeComponent();
-            SetLandscapeImage();
 
-            LandscapeVM.SetTileSelection(TileSelection);
-            
-            
-
-            RenderOptions.SetBitmapScalingMode(Landscape, BitmapScalingMode.NearestNeighbor);
-            RenderOptions.SetBitmapScalingMode(TileSelection, BitmapScalingMode.NearestNeighbor);
+            Init();
         }
 
-        LandscapeViewModel LandscapeVM;
+        private void Init()
+        {
+            SetTileSelection();
+            SetLandscapeImage();
+            SetBitmapScaling();
+        }
+
+        private void SetTileSelection()
+        {
+            LandscapeVM.SetTileSelection(TileSelection);
+        }
 
         private void SetLandscapeImage()
         {
             LandscapeVM.SetLandscapeImage(Landscape);
+        }
+
+        private void SetBitmapScaling()
+        {
+            RenderOptions.SetBitmapScalingMode(Landscape, BitmapScalingMode.NearestNeighbor);
+            RenderOptions.SetBitmapScalingMode(TileSelection, BitmapScalingMode.NearestNeighbor);
         }
     }
 }

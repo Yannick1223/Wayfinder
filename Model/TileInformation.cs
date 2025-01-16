@@ -9,6 +9,11 @@ namespace Wayfinder.Model
 {
     public class TileInformation: ObservableObject
     {
+        public TileType Type { get; private set; }
+        public string Name { get; private set; }
+        public Uri Location { get; private set; }
+        public int Cost { get; private set; }
+
         public TileInformation(TileType _type, string _name, int _cost, Uri _imageLocation)
         {
             Type = _type;
@@ -16,10 +21,5 @@ namespace Wayfinder.Model
             Cost = _cost;
             Location = _imageLocation;
         }
-
-        public TileType Type { get; set; }
-        public string Name { get; set; }
-        public Uri Location { get; set; }
-        public int Cost { get; set; }
     }
 }
