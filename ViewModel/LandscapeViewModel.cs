@@ -28,12 +28,41 @@ namespace Wayfinder.ViewModel
 
             Handler = new LandscapeHandler(100, 100, 8, 8, 1);
             ObservableTileInformation = new ObservableCollection<TileInformation>();
+            AddTiles(LoadDefaultTiles());
+            Handler.GenerateWaterLandscape();
+        }
 
+        private TileInformation[] LoadDefaultTiles()
+        {
+            //Change later that there are more Images foreach Tile with different appearchances
+            TileInformation[] defaultTiles =
+            {
+                new TileInformation(TileType.Start, "Startpunkt", 1, new Uri(@"../Assets/startpoint.jpg", UriKind.Relative)),
+                new TileInformation(TileType.End, "Endpunkt", 1, new Uri(@"../Assets/endpoint.jpg", UriKind.Relative)),
+                new TileInformation(TileType.Land, "Land", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
+                new TileInformation(TileType.Desert, "Wüste", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
+                new TileInformation(TileType.Water, "Wasser", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
+                new TileInformation(TileType.Forest, "Wald", 3, new Uri(@"../Assets/test2.jpg", UriKind.Relative))
+            };
+
+            return defaultTiles;
+        }
+
+        public void AddTile(TileInformation _tile)
+        {
+            Handler.AddTile(_tile);
+            UpdateObservableSelection();
+        }
+
+        public void AddTiles(TileInformation[] _tiles)
+        {
+            Handler.AddTiles(_tiles);
             UpdateObservableSelection();
         }
 
         public void UpdateObservableSelection()
         {
+            ObservableTileInformation.Clear();
             foreach (TileInformation tile in Handler.GetObservableTiles())
             {
                 ObservableTileInformation.Add(tile);
@@ -54,6 +83,19 @@ namespace Wayfinder.ViewModel
         private void SetLandscapeToImageControl()
         {
             Landscape.Source = Handler.Renderer.Landscape;
+        }
+
+        [RelayCommand]
+        public void OnCalculateAStarPath()
+        {
+            Handler.FindPath();
+        }
+
+
+        [RelayCommand]
+        public void OnGenerateRandomLandscape()
+        {
+            Handler.GenerateRandomLandscape(new TileType[] { TileType.Land, TileType.Water, TileType.Desert });
         }
 
 

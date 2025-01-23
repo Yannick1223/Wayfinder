@@ -10,7 +10,11 @@
         mc:Ignorable="d"
         Title="{Binding Title}" Height="1080" Width="1920">
     <DockPanel>
-        <Button Background="Gray" DockPanel.Dock="Bottom" Height="200">Test</Button>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Button Background="Gray" Height="100" Command="{Binding GenerateRandomLandscapeCommand}">Random Map Generieren</Button>
+            <Button Background="LightGray" Height="100" Command="{Binding CalculateAStarPathCommand}">A Stern Algorithmus</Button>
+        </StackPanel>
+        
 
 
         <ListBox x:Name="TileSelection" 
