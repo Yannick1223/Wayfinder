@@ -19,7 +19,7 @@ namespace Wayfinder
     /// </summary>
     public partial class MainWindow : Window
     {
-        private LandscapeViewModel LandscapeVM;
+        private LandscapeViewModel LandscapeVM { get; set; }
 
         public MainWindow()
         {

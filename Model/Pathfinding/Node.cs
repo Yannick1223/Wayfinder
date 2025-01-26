@@ -11,11 +11,17 @@ namespace Wayfinder.Model.Pathfinding
         public int X { get; set; }
         public int Y { get; set; }
 
-        //Cost from Startpoint
+        /// <summary>
+        /// Cost from Startpoint
+        /// </summary>
         public float G { get; set; }
-        //Heuristic Cost
+        /// <summary>
+        /// Heuristic Cost
+        /// </summary>
         public float H { get; set; }
-        //Total Cost
+        /// <summary>
+        /// Total Cost
+        /// </summary>
         public float F => G + H;
 
         public Node? Parent { get; set; }
@@ -27,11 +33,6 @@ namespace Wayfinder.Model.Pathfinding
             G = 0;
             H = 0;
             Parent = null;
-        }
-
-        public int CompareTo(Node _other)
-        {
-            return F.CompareTo(_other.F);
         }
     }
 }

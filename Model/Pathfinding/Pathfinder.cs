@@ -11,19 +11,15 @@ namespace Wayfinder.Model
     public class Pathfinder
     {
         public virtual int[,] Costs { get; private set; }
-        public Pathfinder()
-        {
-
-        }
 
         public virtual void SetCosts(int[,] _costs)
         {
             Costs = _costs;
         }
 
-        public virtual List<Node>? FindPath(Node start, Node goal)
+        public virtual List<Node>? FindPath(Node _start, Node _goal)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected virtual List<Node> RetracePath(Node _path)

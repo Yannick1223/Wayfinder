@@ -10,6 +10,19 @@
         mc:Ignorable="d"
         Title="{Binding Title}" Height="1080" Width="1920">
     <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Datei">
+                <MenuItem Header="Neue Landschaft" Command="{Binding GenerateWaterLandscapeCommand}"/>
+                <MenuItem Header="Speichern" Command=""/>
+                <MenuItem Header="Laden" Command=""/>
+            </MenuItem>
+            <MenuItem Header="Suchverfahren">
+                <MenuItem Header="A*" IsCheckable="True"/>
+                <MenuItem Header="Dijkstra" IsCheckable="True"/>
+            </MenuItem>
+
+        </Menu>
+
         <StackPanel DockPanel.Dock="Bottom">
             <Button Background="Gray" Height="100" Command="{Binding GenerateRandomLandscapeCommand}">Random Map Generieren</Button>
             <Button Background="LightGray" Height="100" Command="{Binding CalculateAStarPathCommand}">A Stern Algorithmus</Button>

@@ -15,40 +15,33 @@ namespace Wayfinder.Model
 {
     public class LandscapeHandler
     {
-        public LandscapeRenderer Renderer { get; private set; }
-        public TileHandler Tiles { get; private set; }
-        public PathfinderHandler Pathfinder { get; private set; }
+        private LandscapeRenderer Renderer { get; set; }
+        private TileHandler Tiles { get; set; }
+        private PathfinderHandler Pathfinder { get; set; }
 
-        public Point? StartPointPosition { get; private set; }
-        public bool IsStartpointSet { get; set; }
-        public Point? EndPointPosition { get; private set; }
-        public bool IsEndpointSet { get; set; }
+        private Point? StartPointPosition { get; set; }
+        private bool IsStartpointSet { get; set; }
+        private Point? EndPointPosition { get; set; }
+        private bool IsEndpointSet { get; set; }
+
 
         public LandscapeHandler(int _rows, int _column, int _tileWidth, int _tileHeight, int _borderThickness)
         {
             Renderer = new LandscapeRenderer(_rows, _column, _tileWidth, _tileHeight, _borderThickness);
             Tiles = new TileHandler(_rows, _column);
-            Pathfinder = new PathfinderHandler();
+            Pathfinder = new PathfinderHandler(new AStar());
 
             IsStartpointSet = false;
             IsEndpointSet = false;
         }
 
-        public ObservableCollection<TileInformation> GetObservableTiles()
+        public WriteableBitmap GetLandscape()
         {
-            return new ObservableCollection<TileInformation>(Tiles.GetAllTilesInformation());
+            return Renderer.GetLandscape();
         }
 
-        public void AddTile(TileInformation _tile)
-        {
-            Tiles.AddNewTile(_tile);
-        }
 
-        public void AddTiles(TileInformation[] _tiles)
-        {
-            Tiles.AddNewTiles(_tiles);
-        }
-
+        //Generate Landscapes
         public void GenerateWaterLandscape()
         {
             WriteableBitmap water = Tiles.GetWriteableBitmap(TileType.Water);
@@ -87,6 +80,7 @@ namespace Wayfinder.Model
             }
         }
 
+        [Obsolete]
         public void GenerateRandomColorLandscape()
         {
             Random rnd = new Random();
@@ -100,63 +94,66 @@ namespace Wayfinder.Model
             }
         }
 
+
+        //Drawing
+        //Refactor later
         public void DrawTileAtPosition(int _row, int _col, TileType _type)
         {
-            if (_type.Equals(Tiles.GetTileType(_row, _col))) return;
+            if (CheckTileRestrictions(_type, _row, _col)) return;
 
-            if (_type.Equals(TileType.Start) && IsStartpointSet) return;
-            if (_type.Equals(TileType.End) && IsEndpointSet) return;
+            if (_type.Equals(TileType.Start) && !IsStartpointSet) SetStartPoint(_row, _col);
+            if (_type.Equals(TileType.End) && !IsEndpointSet) SetEndPoint(_row, _col);
 
-            if (_type.Equals(TileType.Start) && !IsStartpointSet) 
-            {
-                IsStartpointSet = true;
-                StartPointPosition = new Point(_row - 1, _col - 1);
-            } 
-            if (_type.Equals(TileType.End) && !IsEndpointSet)
-            {
-                IsEndpointSet = true;
-                EndPointPosition = new Point(_row - 1, _col - 1);
-            }
-
-            if (Tiles.GetTileType(_row, _col).Equals(TileType.Start) && !_type.Equals(TileType.Start))
-            {
-                ResetStartPoint();
-            }
-            if (Tiles.GetTileType(_row, _col).Equals(TileType.End) && !_type.Equals(TileType.End))
-            {
-                ResetEndPoint();
-            }
+            if (Tiles.GetTileType(_row, _col).Equals(TileType.Start) && !_type.Equals(TileType.Start)) ResetStartPoint();
+            if (Tiles.GetTileType(_row, _col).Equals(TileType.End) && !_type.Equals(TileType.End)) ResetEndPoint();
 
             Tiles.SetTile(_row, _col, _type);
             Renderer.DrawImageAtTile(_row, _col, Tiles.GetWriteableBitmap(_type));
         }
 
-        public void DrawPath(List<Node>? _path)
+
+        //Pathfinding
+        public void SearchPath()
+        {
+            if (StartPointPosition == null || EndPointPosition == null) return;
+            List<Node>? path = Pathfinder.GetPath(StartPointPosition.Value, EndPointPosition.Value, Tiles.GetAllTileCost());
+
+            DebugDrawPath(path, System.Windows.Media.Colors.Red);
+        }
+
+        public void ChangePathfinderalgorithm(Pathfinder _pathfinder)
+        {
+            Pathfinder.SetPathfinderAlgorithm(_pathfinder);
+        }
+
+        private void DebugDrawPath(List<Node>? _path, System.Windows.Media.Color _color)
         {
             if (_path == null) return;
 
             foreach (Node node in _path)
             {
-                Renderer.DrawColorAtTile(node.X + 1, node.Y + 1, System.Windows.Media.Colors.Red);
+                Renderer.DrawColorAtTile(node.X + 1, node.Y + 1, _color);
             }
         }
 
-        public void FindPath()
+
+        //Add Tiles
+        public void AddTile(TileInformation _tile)
         {
-            if(StartPointPosition == null || EndPointPosition == null) return;
-            List<Node>? path = SearchPath(StartPointPosition.Value, EndPointPosition.Value);
-            DrawPath(path);
+            Tiles.AddNewTile(_tile);
         }
 
-        private List<Node>? SearchPath(Point _from, Point _to)
+        public void AddTiles(TileInformation[] _tiles)
         {
-            return GetPath(_from, _to, Tiles.GetAllTileCost()); ;
+            Tiles.AddNewTiles(_tiles);
         }
 
-        private List<Node>? GetPath(Point _from, Point _to, int[,] _costs)
+
+        public ObservableCollection<TileInformation> GetObservableTiles()
         {
-            return Pathfinder.GetPath(_from, _to, _costs);
+            return new ObservableCollection<TileInformation>(Tiles.GetAllTilesInformation());
         }
+        
 
         public Point? GetTileFromPosition(Point _pos)
         {
@@ -168,6 +165,38 @@ namespace Wayfinder.Model
             return Renderer.PositionToTilePosition(_x, _y);
         }
 
+        private bool CheckTileRestrictions(TileType _type, int _row, int _col)
+        {
+            return IsSelectedTileEqualCurrentTile(_type, _row, _col) || IsStartpointSelectedAndSet(_type) || IsEndpointSelectedAndSet(_type);
+        }
+
+        private bool IsSelectedTileEqualCurrentTile(TileType _type, int _row, int _col)
+        {
+            return _type.Equals(Tiles.GetTileType(_row, _col));
+        }
+
+        private bool IsStartpointSelectedAndSet(TileType _type)
+        {
+            return _type.Equals(TileType.Start) && IsStartpointSet;
+        }
+
+        private bool IsEndpointSelectedAndSet(TileType _type)
+        {
+            return _type.Equals(TileType.End) && IsEndpointSet;
+        }
+   
+
+        private void SetStartPoint(int _row, int _col)
+        {
+            IsStartpointSet = true;
+            StartPointPosition = new Point(_row - 1, _col - 1);
+        }
+
+        private void SetEndPoint(int _row, int _col)
+        {
+            IsEndpointSet = true;
+            EndPointPosition = new Point(_row - 1, _col - 1);
+        }
         private void ResetStartPoint()
         {
             IsStartpointSet = false;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -12,11 +11,17 @@ namespace Wayfinder.Model
 {
     public class PathfinderHandler
     {
-        Pathfinder Pathfinder { get; set; }
+        private Pathfinder Pathfinder { get; set; }
 
-        public PathfinderHandler()
+        public PathfinderHandler(Pathfinder _pathfinder)
         {
-            Pathfinder = new AStar();
+            Pathfinder = _pathfinder;
+        }
+
+        public void SetPathfinderAlgorithm(Pathfinder _pathfinder)
+        {
+            if (_pathfinder == null) throw new ArgumentNullException("Pathfinder is null.");
+            Pathfinder = _pathfinder;
         }
 
         public List<Node>? GetPath(Point _from, Point _to, int[,] _costs)
@@ -29,6 +34,5 @@ namespace Wayfinder.Model
             Pathfinder.SetCosts(_costs);
             return Pathfinder.FindPath(_from, _to);
         }
-
     }
 }

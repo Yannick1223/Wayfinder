@@ -15,8 +15,8 @@ namespace Wayfinder.ViewModel
 {
     public partial class LandscapeViewModel: BaseViewModel
     {
-        public LandscapeHandler Handler { get; private set; }
-        public Image Landscape { get; private set; }
+        private LandscapeHandler Handler { get; set; }
+        private Image Landscape { get; set; }
 
         public ObservableCollection<TileInformation> ObservableTileInformation { get; private set; }
 
@@ -42,7 +42,7 @@ namespace Wayfinder.ViewModel
                 new TileInformation(TileType.Land, "Land", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
                 new TileInformation(TileType.Desert, "Wüste", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
                 new TileInformation(TileType.Water, "Wasser", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
-                new TileInformation(TileType.Forest, "Wald", 3, new Uri(@"../Assets/test2.jpg", UriKind.Relative))
+                new TileInformation(TileType.Forest, "Baum", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative))
             };
 
             return defaultTiles;
@@ -82,22 +82,26 @@ namespace Wayfinder.ViewModel
 
         private void SetLandscapeToImageControl()
         {
-            Landscape.Source = Handler.Renderer.Landscape;
+            Landscape.Source = Handler.GetLandscape();
         }
 
         [RelayCommand]
         public void OnCalculateAStarPath()
         {
-            Handler.FindPath();
+            Handler.SearchPath();
         }
-
 
         [RelayCommand]
         public void OnGenerateRandomLandscape()
         {
-            Handler.GenerateRandomLandscape(new TileType[] { TileType.Land, TileType.Water, TileType.Desert });
+            Handler.GenerateRandomLandscape(new TileType[] { TileType.Land, TileType.Water, TileType.Desert, TileType.Forest });
         }
 
+        [RelayCommand]
+        public void OnGenerateWaterLandscape()
+        {
+            Handler.GenerateWaterLandscape();
+        }
 
         [RelayCommand]
         public void OnHoverOverImage(MouseEventArgs e)

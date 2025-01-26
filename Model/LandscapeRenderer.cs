@@ -12,17 +12,17 @@ namespace Wayfinder.Model
 {
     public class LandscapeRenderer
     {
-        public WriteableBitmap Landscape { get; private set; }
-        public int ImageWidth { get; private set; }
-        public int ImageHeight { get; private set; }
+        private WriteableBitmap Landscape { get; set; }
+        private int ImageWidth { get; set; }
+        private int ImageHeight { get; set; }
 
-        public int TileWidth { get; private set; }
-        public int TileHeight { get; private set; }
+        private int TileWidth { get; set; }
+        private int TileHeight { get; set; }
 
         public int Rows { get; private set; }
         public int Columns { get; private set; }
 
-        public int BorderThickness { get; private set; }
+        private int BorderThickness { get; set; }
 
         public LandscapeRenderer(int _rows, int _columns, int _tileWidth, int _tileHeight, int _borderThickness)
         {
@@ -42,6 +42,11 @@ namespace Wayfinder.Model
             if (_width > (MathF.Pow(2, 15) - 1) ||  _height > (MathF.Pow(2, 15) - 1)) throw new Exception("To large Image");
 
             return BitmapFactory.New(_width, _height);
+        }
+
+        public WriteableBitmap GetLandscape()
+        {
+            return Landscape;
         }
 
         public void CalculateImageSize()
