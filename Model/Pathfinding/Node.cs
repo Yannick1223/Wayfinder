@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wayfinder.Model.Pathfinding
+namespace Wayfinder.Model
 {
     public class Node
     {

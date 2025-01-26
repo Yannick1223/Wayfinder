@@ -37,12 +37,13 @@ namespace Wayfinder.ViewModel
             //Change later that there are more Images foreach Tile with different appearchances
             TileInformation[] defaultTiles =
             {
-                new TileInformation(TileType.Start, "Startpunkt", 1, new Uri(@"../Assets/startpoint.jpg", UriKind.Relative)),
-                new TileInformation(TileType.End, "Endpunkt", 1, new Uri(@"../Assets/endpoint.jpg", UriKind.Relative)),
-                new TileInformation(TileType.Land, "Land", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
-                new TileInformation(TileType.Desert, "Wüste", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
-                new TileInformation(TileType.Water, "Wasser", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
-                new TileInformation(TileType.Forest, "Baum", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative))
+                new (TileType.Start, "Startpunkt", 1, new Uri(@"../Assets/startpoint.jpg", UriKind.Relative)),
+                new (TileType.End, "Endpunkt", 1, new Uri(@"../Assets/endpoint.jpg", UriKind.Relative)),
+                new (TileType.Land, "Land", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
+                new (TileType.Desert, "Wüste", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
+                new (TileType.Water, "Wasser", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
+                new (TileType.Forest, "Baum", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative)),
+                new (TileType.Snow, "Schnee", 2, new Uri(@"../Assets/snow.jpg", UriKind.Relative))
             };
 
             return defaultTiles;
@@ -94,13 +95,44 @@ namespace Wayfinder.ViewModel
         [RelayCommand]
         public void OnGenerateRandomLandscape()
         {
-            Handler.GenerateRandomLandscape(new TileType[] { TileType.Land, TileType.Water, TileType.Desert, TileType.Forest });
+            List<TileType> tiles = Enum.GetValues<TileType>().ToList();
+            tiles.Remove(TileType.Start);
+            tiles.Remove(TileType.End);
+
+            Handler.GenerateRandomLandscape(tiles.ToArray());
         }
 
         [RelayCommand]
         public void OnGenerateWaterLandscape()
         {
             Handler.GenerateWaterLandscape();
+        }
+
+        [RelayCommand]
+        public void OnChangePathfindingAlgorithm(string _value)
+        {
+            if (_value == null) return;
+
+            Pathfinder? finder = null;
+            switch (_value.Trim().ToLower())
+            {
+                case "astar":
+                    finder = new AStar();
+                    break;
+                case "dijkstra":
+                    finder = new Dijkstra();
+                    break;
+                case "bfs":
+                    finder = new BFS();
+                    break;
+                case "dfs":
+                    finder = new DFS();
+                    break;
+                default:
+                    throw new Exception($"Not implemented Pathfinding Algorithm: {_value}.");
+            }
+
+            Handler.ChangePathfinderalgorithm(finder);
         }
 
         [RelayCommand]

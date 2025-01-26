@@ -9,12 +9,13 @@ namespace Wayfinder.Model
 {
     public enum TileType
     {
-        Start, // Cost = 1
-        End, // Cost = 1
-        Land,  // Cost = 1
-        Desert, // Cost 2
-        Water, // Cost = Infinity
+        Start, //Cost = 1
+        End, //Cost = 1
+        Land,  //Cost = 1
+        Desert, //Cost 2
+        Water, //Cost = Infinity
         Forest, //Cost = 3
+        Snow, //Cost = 2
     }
 
     public class TileInformation: ObservableObject

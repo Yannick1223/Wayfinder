@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
-using Wayfinder.Model.Pathfinding;
 
 namespace Wayfinder.Model
 {
