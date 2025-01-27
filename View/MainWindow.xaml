@@ -30,9 +30,12 @@
 
         </Menu>
 
-        <StackPanel DockPanel.Dock="Bottom">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
             <Button Background="Gray" Height="100" Command="{Binding GenerateRandomLandscapeCommand}">Random Map Generieren</Button>
             <Button Background="LightGray" Height="100" Command="{Binding CalculateAStarPathCommand}">A Stern Algorithmus</Button>
+
+            <!--TextBox? Slider? Etwas anderes?-->
+            <TextBox Text="1/40"></TextBox>
         </StackPanel>
         
 

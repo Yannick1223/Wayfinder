@@ -39,11 +39,13 @@ namespace Wayfinder.ViewModel
             {
                 new (TileType.Start, "Startpunkt", 1, new Uri(@"../Assets/startpoint.jpg", UriKind.Relative)),
                 new (TileType.End, "Endpunkt", 1, new Uri(@"../Assets/endpoint.jpg", UriKind.Relative)),
-                new (TileType.Land, "Land", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
-                new (TileType.Desert, "Wüste", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
-                new (TileType.Water, "Wasser", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
-                new (TileType.Forest, "Baum", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative)),
-                new (TileType.Snow, "Schnee", 2, new Uri(@"../Assets/snow.jpg", UriKind.Relative))
+                new (TileType.Land, "Land (1)", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
+                new (TileType.Desert, "Wüste (2)", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
+                new (TileType.Water, "Wasser (\u221E)", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
+                new (TileType.Forest, "Baum (3)", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative)),
+                new (TileType.Snow, "Schnee (2)", 2, new Uri(@"../Assets/snow.jpg", UriKind.Relative)),
+                new (TileType.Bridge_Horizontal, "Brücke (1)", 1, new Uri(@"../Assets/bridge_horizontal.jpg", UriKind.Relative)),
+                new (TileType.Bridge_Vertical, "Brücke (1)", 1, new Uri(@"../Assets/bridge_vertical.jpg", UriKind.Relative)),
             };
 
             return defaultTiles;
@@ -96,8 +98,7 @@ namespace Wayfinder.ViewModel
         public void OnGenerateRandomLandscape()
         {
             List<TileType> tiles = Enum.GetValues<TileType>().ToList();
-            tiles.Remove(TileType.Start);
-            tiles.Remove(TileType.End);
+            tiles.RemoveAll(type => type.Equals(TileType.Start) || type.Equals(TileType.End) || type.Equals(TileType.Bridge_Horizontal) || type.Equals(TileType.Bridge_Vertical));
 
             Handler.GenerateRandomLandscape(tiles.ToArray());
         }

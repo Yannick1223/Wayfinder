@@ -16,6 +16,8 @@ namespace Wayfinder.Model
         Water, //Cost = Infinity
         Forest, //Cost = 3
         Snow, //Cost = 2
+        Bridge_Vertical, //Cost = 1
+        Bridge_Horizontal, //Cost = 1
     }
 
     public class TileInformation: ObservableObject
