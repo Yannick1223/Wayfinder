@@ -19,11 +19,13 @@
     <None Remove="Assets\Sand.jpg" />
     <None Remove="Assets\Snow.jpg" />
     <None Remove="Assets\Water.jpg" />
+    <None Remove="Assets\Water_deep.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="SimplexNoise" Version="2.0.0" />
     <PackageReference Include="WriteableBitmapEx" Version="1.6.8" />
   </ItemGroup>
 
@@ -38,6 +40,7 @@
     <Resource Include="Assets\Snow.jpg" />
     <Resource Include="Assets\Startpoint.jpg" />
     <Resource Include="Assets\Water.jpg" />
+    <Resource Include="Assets\Water_deep.jpg" />
   </ItemGroup>
 
 </Project>

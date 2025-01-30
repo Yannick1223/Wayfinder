@@ -14,6 +14,7 @@ namespace Wayfinder.Model
         Land,  //Cost = 1
         Desert, //Cost 2
         Water, //Cost = Infinity
+        DeepWater, //Cost = Infinity
         Forest, //Cost = 3
         Snow, //Cost = 2
         Bridge_Vertical, //Cost = 1

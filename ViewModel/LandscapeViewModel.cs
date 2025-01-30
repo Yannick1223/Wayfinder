@@ -42,6 +42,7 @@ namespace Wayfinder.ViewModel
                 new (TileType.Land, "Land (1)", 1, new Uri(@"../Assets/grass.jpg", UriKind.Relative)),
                 new (TileType.Desert, "Wüste (2)", 2, new Uri(@"../Assets/sand.jpg", UriKind.Relative)),
                 new (TileType.Water, "Wasser (\u221E)", 0, new Uri(@"../Assets/water.jpg", UriKind.Relative)),
+                new (TileType.DeepWater, "Wasser (\u221E)", 0, new Uri(@"../Assets/water_deep.jpg", UriKind.Relative)),
                 new (TileType.Forest, "Baum (3)", 3, new Uri(@"../Assets/forest.jpg", UriKind.Relative)),
                 new (TileType.Snow, "Schnee (2)", 2, new Uri(@"../Assets/snow.jpg", UriKind.Relative)),
                 new (TileType.Bridge_Horizontal, "Brücke (1)", 1, new Uri(@"../Assets/bridge_horizontal.jpg", UriKind.Relative)),
@@ -98,7 +99,7 @@ namespace Wayfinder.ViewModel
         public void OnGenerateRandomLandscape()
         {
             List<TileType> tiles = Enum.GetValues<TileType>().ToList();
-            tiles.RemoveAll(type => type.Equals(TileType.Start) || type.Equals(TileType.End) || type.Equals(TileType.Bridge_Horizontal) || type.Equals(TileType.Bridge_Vertical));
+            tiles.RemoveAll(type => type.Equals(TileType.Start) || type.Equals(TileType.End) || type.Equals(TileType.Bridge_Horizontal) || type.Equals(TileType.Bridge_Vertical) || type.Equals(TileType.DeepWater));
 
             Handler.GenerateRandomLandscape(tiles.ToArray());
         }
@@ -107,6 +108,12 @@ namespace Wayfinder.ViewModel
         public void OnGenerateWaterLandscape()
         {
             Handler.GenerateWaterLandscape();
+        }
+
+        [RelayCommand]
+        public void OnGenerateNoiseLandscape()
+        {
+            Handler.GenerateSimplexNoiselandscape();
         }
 
         [RelayCommand]

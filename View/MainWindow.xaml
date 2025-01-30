@@ -19,7 +19,7 @@
             <MenuItem Header="Generieren">
                 <MenuItem Header="Neue Landschaft" Command="{Binding GenerateWaterLandscapeCommand}"/>
                 <MenuItem Header="Zufällige Landschafft" Command="{Binding GenerateRandomLandscapeCommand}"></MenuItem>
-                <MenuItem Header="Perlin Noise Landschafft"></MenuItem>
+                <MenuItem Header="Simplex Noise Landschafft" Command="{Binding GenerateNoiseLandscapeCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Suchverfahren">
                 <MenuItem Header="A*" Command="{Binding ChangePathfindingAlgorithmCommand}" CommandParameter="AStar"/>

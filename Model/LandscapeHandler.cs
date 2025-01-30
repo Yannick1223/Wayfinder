@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
+using Wayfinder.Model.Noise;
+
 
 namespace Wayfinder.Model
 {
@@ -75,6 +77,55 @@ namespace Wayfinder.Model
 
                     Renderer.DrawImageAtTile(x, y, tiles[rndnum]);
                     Tiles.SetTile(x, y, _tilesType[rndnum]);
+                }
+            }
+        }
+
+        public void GenerateSimplexNoiselandscape()
+        {
+            Random rnd = new Random();
+            NoiseGenerator noise = new NoiseGenerator(rnd.Next(0, int.MaxValue - 1));
+
+            WriteableBitmap water = Tiles.GetWriteableBitmap(TileType.Water);
+            WriteableBitmap deepwater = Tiles.GetWriteableBitmap(TileType.DeepWater);
+            WriteableBitmap land = Tiles.GetWriteableBitmap(TileType.Land);
+            WriteableBitmap desert = Tiles.GetWriteableBitmap(TileType.Desert);
+            WriteableBitmap tree = Tiles.GetWriteableBitmap(TileType.Forest);
+
+            ResetStartPoint();
+            ResetEndPoint();
+
+            for (int x = 1; x < Renderer.Rows + 1; x++)
+            {
+                for (int y = 1; y < Renderer.Columns + 1; y++)
+                {
+                    double g = noise.GetValue(x, y, 0.05f) / 256;
+
+                    if (g < 0.175)
+                    {
+                        Renderer.DrawImageAtTile(x, y, deepwater);
+                        Tiles.SetTile(x, y, TileType.DeepWater);
+                    }
+                    else if(g < 0.65)
+                    {
+                        Renderer.DrawImageAtTile(x, y, water);
+                        Tiles.SetTile(x, y, TileType.Water);
+                    }
+                    else if (g < 0.75)
+                    {
+                        Renderer.DrawImageAtTile(x, y, desert);
+                        Tiles.SetTile(x, y, TileType.Desert);
+                    }
+                    else if (g < 0.89)
+                    {
+                        Renderer.DrawImageAtTile(x, y, land);
+                        Tiles.SetTile(x, y, TileType.Land);
+                    }
+                    else if (g > 0.89)
+                    {
+                        Renderer.DrawImageAtTile(x, y, tree);
+                        Tiles.SetTile(x, y, TileType.Forest);
+                    }
                 }
             }
         }
