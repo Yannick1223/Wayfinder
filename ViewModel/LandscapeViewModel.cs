@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,6 +22,13 @@ namespace Wayfinder.ViewModel
         public ObservableCollection<TileInformation> ObservableTileInformation { get; private set; }
 
         private ListBox SelectedItem { get; set; }
+
+        [ObservableProperty]
+        public float zoom;
+        [ObservableProperty]
+        public string zoomText;
+
+        private Slider ZoomSlider { get; set; }
 
         public LandscapeViewModel()
         {
@@ -83,6 +91,13 @@ namespace Wayfinder.ViewModel
             Landscape = _landscape;
             SetLandscapeToImageControl();
         }
+
+        public void SetZoomSlider(Slider _slider)
+        {
+            ZoomSlider = _slider;
+            SetZoom(ZoomSlider.Value);
+        }
+
 
         private void SetLandscapeToImageControl()
         {
@@ -147,6 +162,37 @@ namespace Wayfinder.ViewModel
         public void OnHoverOverImage(MouseEventArgs e)
         {
             DrawTile(e);
+        }
+
+        [RelayCommand]
+        public void OnZoomInLandscape()
+        {
+            SetZoom(ZoomSlider.Value + 0.25);
+            UpdateZoomSlider();
+        }
+
+        [RelayCommand]
+        public void OnZoomOutLandscape()
+        {
+            SetZoom(ZoomSlider.Value - 0.25);
+            UpdateZoomSlider();
+        }
+
+        [RelayCommand]
+        public void OnZoomWithSlider()
+        {
+            SetZoom(ZoomSlider.Value);
+        }
+
+        private void SetZoom(double _zoom)
+        {
+            Zoom = (float)Math.Clamp(_zoom, ZoomSlider.Minimum, ZoomSlider.Maximum);
+            ZoomText = $"{(int)(Zoom * 100)}%";
+        }
+
+        private void UpdateZoomSlider()
+        {
+            ZoomSlider.Value = Zoom;
         }
 
         private void DrawTile(MouseEventArgs e)

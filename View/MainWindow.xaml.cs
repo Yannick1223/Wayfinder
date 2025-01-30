@@ -34,6 +34,7 @@ namespace Wayfinder
         {
             SetTileSelection();
             SetLandscapeImage();
+            SetZoomSlider();
             SetBitmapScaling();
         }
 
@@ -45,6 +46,11 @@ namespace Wayfinder
         private void SetLandscapeImage()
         {
             LandscapeVM.SetLandscapeImage(Landscape);
+        }
+
+        private void SetZoomSlider()
+        {
+            LandscapeVM.SetZoomSlider(ZoomSlider);
         }
 
         private void SetBitmapScaling()

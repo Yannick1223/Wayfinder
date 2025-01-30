@@ -12,7 +12,7 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datei">
-                
+
                 <MenuItem Header="Speichern" Command=""/>
                 <MenuItem Header="Laden" Command=""/>
             </MenuItem>
@@ -30,71 +30,132 @@
 
         </Menu>
 
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <Button Background="Gray" Height="100" Command="{Binding GenerateRandomLandscapeCommand}">Random Map Generieren</Button>
-            <Button Background="LightGray" Height="100" Command="{Binding CalculateAStarPathCommand}">A Stern Algorithmus</Button>
+        <Grid DockPanel.Dock="Right">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
 
-            <!--TextBox? Slider? Etwas anderes?-->
-            <TextBox Text="1/40"></TextBox>
-        </StackPanel>
+            <ListBox x:Name="TileSelection" 
+         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+         SelectionMode="Single"
+         BorderBrush="LightGray"
+         BorderThickness="2"
+         ItemsSource="{Binding ObservableTileInformation}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" VerticalAlignment="Top"  />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2"
+                    BorderBrush="Black"
+                    CornerRadius="10"
+                    Padding="5">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}" Height="25" Width="100" TextAlignment="Center" FontSize="15"></TextBlock>
+                                <Image x:Name="Tiles" 
+                           Source="{Binding Location}" 
+                           Width="100" 
+                           Height="100"
+                           SnapsToDevicePixels="True"></Image>
+                            </StackPanel>
+                        </Border>
+
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </Grid>
+        
         
 
-
-        <ListBox x:Name="TileSelection" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                 DockPanel.Dock="Right"
-                 SelectionMode="Single"
-                 BorderBrush="LightGray"
-                 BorderThickness="2"
-                 ItemsSource="{Binding ObservableTileInformation}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="2" VerticalAlignment="Top"  />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-
-            
-
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="2"
+        <Border BorderThickness="1"
                             BorderBrush="Black"
                             CornerRadius="10"
                             Padding="5">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="{Binding Name}" Height="25" Width="100" TextAlignment="Center" FontSize="15"></TextBlock>
-                            <Image x:Name="Tiles" 
-                                   Source="{Binding Location}" 
-                                   Width="100" 
-                                   Height="100"
-                                   SnapsToDevicePixels="True"></Image>
-                        </StackPanel>
-                    </Border>
-                    
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
 
-        <ScrollViewer HorizontalScrollBarVisibility="auto"
-                      VerticalScrollBarVisibility="auto"
-                      Padding="10">
-            <Image x:Name="Landscape" 
-                   SnapsToDevicePixels="True">
-                <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger EventName="MouseMove">
-                        <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
-                               PassEventArgsToCommand="True"/>
-                    </behaviors:EventTrigger>
-                    <behaviors:EventTrigger EventName="MouseDown">
-                        <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
-                                PassEventArgsToCommand="True"/>
-                    </behaviors:EventTrigger>
-                </behaviors:Interaction.Triggers>
-                <Image.LayoutTransform>
-                    <ScaleTransform ScaleX="6" ScaleY="6"></ScaleTransform>
-                </Image.LayoutTransform>
-            </Image>
-        </ScrollViewer>
+                <ScrollViewer HorizontalScrollBarVisibility="auto"
+                              VerticalScrollBarVisibility="auto"
+                              Padding="10">
+                    <Image x:Name="Landscape" 
+                           SnapsToDevicePixels="True">
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="MouseMove">
+                                <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
+                                                   PassEventArgsToCommand="True"/>
+                            </behaviors:EventTrigger>
+                            <behaviors:EventTrigger EventName="MouseDown">
+                                <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
+                                                   PassEventArgsToCommand="True"/>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                        <Image.LayoutTransform>
+                            <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"></ScaleTransform>
+                        </Image.LayoutTransform>
+                    </Image>
+                </ScrollViewer>
 
+                <Separator Grid.Row="1" Margin="0 5"></Separator>
+
+                <Grid Grid.Row="2" HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding ZoomText}" 
+                               Grid.Column="0" 
+                               Height="20" 
+                               Padding="0 0 5 0"></TextBlock>
+                    <Button Content="-" 
+                            Width="20" 
+                            Height="20" 
+                            Grid.Column="1"
+                            Command="{Binding ZoomOutLandscapeCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Slider x:Name="ZoomSlider"
+                            Grid.Column="2"
+                            Minimum="1" 
+                            Maximum="50"
+                            Value="7.5"
+                            Width="250"
+                            Height="20"
+                            Margin="5 0">
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="ValueChanged">
+                                <behaviors:InvokeCommandAction Command="{Binding ZoomWithSliderCommand}"
+                                                               PassEventArgsToCommand="True"/>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Slider>
+                    <Button Content="+" 
+                            Width="20" 
+                            Height="20" 
+                            Grid.Column="3"
+                            Command="{Binding ZoomInLandscapeCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Border>
     </DockPanel>
 </Window>
