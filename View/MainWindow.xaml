@@ -37,37 +37,52 @@
             </Grid.RowDefinitions>
 
             <ListBox x:Name="TileSelection" 
-         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-         SelectionMode="Single"
-         BorderBrush="LightGray"
-         BorderThickness="2"
-         ItemsSource="{Binding ObservableTileInformation}">
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     SelectionMode="Single"
+                     BorderBrush="LightGray"
+                     BorderThickness="2"
+                     ItemsSource="{Binding ObservableTileInformation}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="2" VerticalAlignment="Top"  />
+                        <UniformGrid Columns="2" VerticalAlignment="Top"/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border BorderThickness="2"
-                    BorderBrush="Black"
-                    CornerRadius="10"
-                    Padding="5">
+                                BorderBrush="Black"
+                                CornerRadius="10"
+                                Padding="5">
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="{Binding Name}" Height="25" Width="100" TextAlignment="Center" FontSize="15"></TextBlock>
                                 <Image x:Name="Tiles" 
-                           Source="{Binding Location}" 
-                           Width="100" 
-                           Height="100"
-                           SnapsToDevicePixels="True"></Image>
+                                       Source="{Binding Location}" 
+                                       Width="100" 
+                                       Height="100"
+                                       SnapsToDevicePixels="True"></Image>
                             </StackPanel>
                         </Border>
-
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
+            <StackPanel Grid.Row="1" Margin="0 10 0 0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Zurück" Command="{Binding PreviousPathCommand}" Height="20" HorizontalAlignment="Right"></Button>
+                    <TextBlock Text="{Binding PathFoundText}" Margin="5 0" Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
+                    <Button Grid.Column="2" Content="Nächster" Command="{Binding NextPathCommand}" Height="20" HorizontalAlignment="Left"></Button>
+                </Grid>
+                <Button Content="Weg suchen"
+                        Margin="5 10 5 5"
+                        Height="50"
+                        Command="{Binding CalculatePathCommand}"></Button>
+            </StackPanel>
         </Grid>
         
         

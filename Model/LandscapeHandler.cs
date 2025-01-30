@@ -147,9 +147,9 @@ namespace Wayfinder.Model
 
         //Drawing
         //Refactor later
-        public void DrawTileAtPosition(int _row, int _col, TileType _type)
+        public bool DrawTileAtPosition(int _row, int _col, TileType _type)
         {
-            if (CheckTileRestrictions(_type, _row, _col)) return;
+            if (CheckTileRestrictions(_type, _row, _col)) return false;
 
             if (_type.Equals(TileType.Start) && !IsStartpointSet) SetStartPoint(_row, _col);
             if (_type.Equals(TileType.End) && !IsEndpointSet) SetEndPoint(_row, _col);
@@ -157,18 +157,32 @@ namespace Wayfinder.Model
             if (Tiles.GetTileType(_row, _col).Equals(TileType.Start) && !_type.Equals(TileType.Start)) ResetStartPoint();
             if (Tiles.GetTileType(_row, _col).Equals(TileType.End) && !_type.Equals(TileType.End)) ResetEndPoint();
 
+
             Tiles.SetTile(_row, _col, _type);
             Renderer.DrawImageAtTile(_row, _col, Tiles.GetWriteableBitmap(_type));
+            return true;
+        }
+
+        public void VisitTile(int _row1, int _col1, int _row2, int _col2, bool moveToStartPoint)
+        {
+            if (moveToStartPoint)
+            {
+                Renderer.DrawImageAtTile(_row1 + 1, _col1 + 1, Tiles.GetWriteableBitmap(TileType.Land));
+                Renderer.DrawImageAtTile(_row2 + 1, _col2 + 1, Tiles.GetWriteableBitmap(TileType.Start));
+            }
+            else
+            {
+                Renderer.DrawImageAtTile(_row1 + 1, _col1 + 1, Tiles.GetWriteableBitmap(Tiles.Tiles[_row1, _col1].Type));
+                Renderer.DrawImageAtTile(_row2 + 1, _col2 + 1, Tiles.GetWriteableBitmap(TileType.Start));
+            }
         }
 
 
         //Pathfinding
-        public void SearchPath()
+        public List<Node>? SearchPath()
         {
-            if (StartPointPosition == null || EndPointPosition == null) return;
-            List<Node>? path = Pathfinder.GetPath(StartPointPosition.Value, EndPointPosition.Value, Tiles.GetAllTileCost());
-
-            DebugDrawPath(path, System.Windows.Media.Colors.Red);
+            if (StartPointPosition == null || EndPointPosition == null) return null;
+            return Pathfinder.GetPath(StartPointPosition.Value, EndPointPosition.Value, Tiles.GetAllTileCost());
         }
 
         public void ChangePathfinderalgorithm(Pathfinder _pathfinder)
@@ -176,7 +190,7 @@ namespace Wayfinder.Model
             Pathfinder.SetPathfinderAlgorithm(_pathfinder);
         }
 
-        private void DebugDrawPath(List<Node>? _path, System.Windows.Media.Color _color)
+        public void DebugDrawPath(List<Node>? _path, System.Windows.Media.Color _color)
         {
             if (_path == null) return;
 

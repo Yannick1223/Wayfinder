@@ -28,11 +28,19 @@ namespace Wayfinder.ViewModel
         [ObservableProperty]
         public string zoomText;
 
+        
+        [ObservableProperty]
+        public string pathFoundText;
+        private int PathIndex{ get; set; }
+        private List<Node>? Path { get; set; }
+
         private Slider ZoomSlider { get; set; }
 
         public LandscapeViewModel()
         {
             Title = "Wayfinder";
+            PathFoundText = "0/0";
+            PathIndex = 0;
 
             Handler = new LandscapeHandler(100, 100, 8, 8, 1);
             ObservableTileInformation = new ObservableCollection<TileInformation>();
@@ -105,9 +113,61 @@ namespace Wayfinder.ViewModel
         }
 
         [RelayCommand]
-        public void OnCalculateAStarPath()
+        public void OnCalculatePath()
         {
-            Handler.SearchPath();
+            ResetPath();
+            Path = Handler.SearchPath();
+
+            if (Path == null)
+            {
+                PathFoundText = "0/0";
+            }
+            else
+            {
+                PathFoundText = $"0/{Path.Count - 1}";
+            }
+        }
+
+        [RelayCommand]
+        public void OnNextPath()
+        {
+            if (Path == null) return;
+
+            PathIndex = Math.Clamp(PathIndex + 1, 0, Path.Count - 1);
+            PathFoundText = $"{PathIndex}/{Path.Count - 1}";
+
+            bool moveAwayFromStartPoint = PathIndex == 1;
+
+            Handler.VisitTile(Path[PathIndex - 1].X, Path[PathIndex - 1].Y, Path[PathIndex].X, Path[PathIndex].Y, moveAwayFromStartPoint);
+
+            //Handler.VisitTile(Path[PathIndex - 1].X + 1, Path[PathIndex - 1].Y + 1, Path[PathIndex].X + 1, Path[PathIndex].Y + 1, moveToStartPoint);
+        }
+
+        [RelayCommand]
+        public void OnPreviousPath()
+        {
+            if (Path == null) return;
+
+            PathIndex = Math.Clamp(PathIndex - 1, 0, Path.Count - 1);
+            PathFoundText = $"{PathIndex}/{Path.Count - 1}";
+
+            //bool moveToStartPoint = PathIndex == 0;
+
+            Handler.VisitTile(Path[PathIndex + 1].X, Path[PathIndex + 1].Y, Path[PathIndex].X, Path[PathIndex].Y, false);
+
+            //Handler.VisitTile(Path[PathIndex + 1].X + 1, Path[PathIndex + 1].Y + 1, Path[PathIndex].X + 1, Path[PathIndex].Y + 1, moveToStartPoint);
+        }
+
+        private void ResetPath()
+        {
+            if(PathIndex != 0 && Path != null)
+            {
+                Handler.VisitTile(Path[PathIndex].X, Path[PathIndex].Y, Path[0].X, Path[0].Y, false);
+            }
+
+            PathIndex = 0;
+            PathFoundText = "0/0";
+            Path = null;
         }
 
         [RelayCommand]
@@ -116,18 +176,22 @@ namespace Wayfinder.ViewModel
             List<TileType> tiles = Enum.GetValues<TileType>().ToList();
             tiles.RemoveAll(type => type.Equals(TileType.Start) || type.Equals(TileType.End) || type.Equals(TileType.Bridge_Horizontal) || type.Equals(TileType.Bridge_Vertical) || type.Equals(TileType.DeepWater));
 
+            ResetPath();
+
             Handler.GenerateRandomLandscape(tiles.ToArray());
         }
 
         [RelayCommand]
         public void OnGenerateWaterLandscape()
         {
+            ResetPath();
             Handler.GenerateWaterLandscape();
         }
 
         [RelayCommand]
         public void OnGenerateNoiseLandscape()
         {
+            ResetPath();
             Handler.GenerateSimplexNoiselandscape();
         }
 
@@ -154,7 +218,7 @@ namespace Wayfinder.ViewModel
                 default:
                     throw new Exception($"Not implemented Pathfinding Algorithm: {_value}.");
             }
-
+            ResetPath();
             Handler.ChangePathfinderalgorithm(finder);
         }
 
@@ -214,7 +278,12 @@ namespace Wayfinder.ViewModel
 
             if(tilePos != null && _type != null)
             {
-                Handler.DrawTileAtPosition((int)tilePos.Value.X, (int)tilePos.Value.Y, _type.Value);
+                bool drawed = Handler.DrawTileAtPosition((int)tilePos.Value.X, (int)tilePos.Value.Y, _type.Value);
+
+                if (drawed)
+                {
+                    ResetPath();
+                }
             }
         }
 
