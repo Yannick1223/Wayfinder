@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using Wayfinder.Model;
+using Wayfinder.View;
 
 namespace Wayfinder.ViewModel
 {
@@ -36,13 +37,17 @@ namespace Wayfinder.ViewModel
 
         private Slider ZoomSlider { get; set; }
 
+        [ObservableProperty]
+        public string selectedPathfindingAlgorithm;
+
         public LandscapeViewModel()
         {
             Title = "Wayfinder";
+            SelectedPathfindingAlgorithm = "A Stern";
             PathFoundText = "0/0";
             PathIndex = 0;
 
-            Handler = new LandscapeHandler(100, 100, 8, 8, 1);
+            Handler = new LandscapeHandler(20, 20, 8, 8, 1);
             ObservableTileInformation = new ObservableCollection<TileInformation>();
             AddTiles(LoadDefaultTiles());
             Handler.GenerateWaterLandscape();
@@ -162,7 +167,8 @@ namespace Wayfinder.ViewModel
         {
             if(PathIndex != 0 && Path != null)
             {
-                Handler.VisitTile(Path[PathIndex].X, Path[PathIndex].Y, Path[0].X, Path[0].Y, false);
+                Handler.ResetTile(Path[0].X, Path[0].Y);
+                Handler.ResetTile(Path[PathIndex].X, Path[PathIndex].Y);
             }
 
             PathIndex = 0;
@@ -179,6 +185,27 @@ namespace Wayfinder.ViewModel
             ResetPath();
 
             Handler.GenerateRandomLandscape(tiles.ToArray());
+        }
+
+        [RelayCommand]
+        public void OnGenerateNewLandscape()
+        {
+            NewLandscape dialog = new NewLandscape();
+
+            bool closed = dialog.ShowDialog().Equals(false);
+
+            if (closed)
+            {
+                if(dialog.GeneratorVM.Rows.HasValue && dialog.GeneratorVM.Columns.HasValue)
+                {
+                    Handler = new LandscapeHandler(dialog.GeneratorVM.Rows.Value, dialog.GeneratorVM.Columns.Value, 8, 8, 1);
+                    SetLandscapeToImageControl();
+                    AddTiles(LoadDefaultTiles());
+                    Handler.GenerateWaterLandscape();
+                    ResetPath();
+                }
+                Console.WriteLine();
+            }
         }
 
         [RelayCommand]
@@ -205,15 +232,19 @@ namespace Wayfinder.ViewModel
             {
                 case "astar":
                     finder = new AStar();
+                    SelectedPathfindingAlgorithm = "A Stern";
                     break;
                 case "dijkstra":
                     finder = new Dijkstra();
+                    SelectedPathfindingAlgorithm = "Dijkstra";
                     break;
                 case "bfs":
                     finder = new BFS();
+                    SelectedPathfindingAlgorithm = "BFS";
                     break;
                 case "dfs":
                     finder = new DFS();
+                    SelectedPathfindingAlgorithm = "DFS";
                     break;
                 default:
                     throw new Exception($"Not implemented Pathfinding Algorithm: {_value}.");

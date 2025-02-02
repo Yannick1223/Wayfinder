@@ -10,6 +10,7 @@ using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using Wayfinder.Model.Noise;
+using static System.Net.WebRequestMethods;
 
 
 namespace Wayfinder.Model
@@ -21,9 +22,9 @@ namespace Wayfinder.Model
         private PathfinderHandler Pathfinder { get; set; }
 
         private Point? StartPointPosition { get; set; }
-        private bool IsStartpointSet { get; set; }
+        public bool IsStartpointSet { get; private set; }
         private Point? EndPointPosition { get; set; }
-        private bool IsEndpointSet { get; set; }
+        public bool IsEndpointSet { get; private set; }
 
 
         public LandscapeHandler(int _rows, int _column, int _tileWidth, int _tileHeight, int _borderThickness)
@@ -174,6 +175,19 @@ namespace Wayfinder.Model
             {
                 Renderer.DrawImageAtTile(_row1 + 1, _col1 + 1, Tiles.GetWriteableBitmap(Tiles.Tiles[_row1, _col1].Type));
                 Renderer.DrawImageAtTile(_row2 + 1, _col2 + 1, Tiles.GetWriteableBitmap(TileType.Start));
+            }
+        }
+        public void ResetTile(int _row, int _col)
+        {
+            Renderer.DrawImageAtTile(_row + 1, _col + 1, Tiles.GetWriteableBitmap(Tiles.Tiles[_row, _col].Type));
+        }
+        public void ResetPath(List<Node>? _path)
+        {
+            if (_path == null) return;
+
+            foreach(Node tile in _path)
+            {
+                Renderer.DrawImageAtTile(tile.X + 1, tile.Y + 1, Tiles.GetWriteableBitmap(Tiles.Tiles[tile.X, tile.Y].Type));
             }
         }
 
