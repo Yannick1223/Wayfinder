@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using Wayfinder.Model.Noise;
-using static System.Net.WebRequestMethods;
 
 
 namespace Wayfinder.Model
@@ -44,10 +42,45 @@ namespace Wayfinder.Model
 
 
         //Generate Landscapes
+        public void GenerateLandscapeFromFile(int[,] _tileID)
+        {
+            TileType[] types = Enum.GetValues<TileType>();
+            int typeLenght = types.Length;
+            WriteableBitmap[] tiles = Tiles.GetAllWriteableBitmaps(types);
+
+            ResetStartPoint();
+            ResetEndPoint();
+
+            for (int y = 1; y < _tileID.GetLength(1) + 1; y++)
+            {
+                for (int x = 1; x < _tileID.GetLength(0) + 1; x++)
+                {
+                    int tile = _tileID[x - 1, y - 1];
+                    if (tile > typeLenght) continue;
+
+                    TileType type = types[tile];
+
+                    //If there are somehow more than 1 Start or Endpoints in the File
+                    if(type.Equals(TileType.Start) && IsStartpointSet || type.Equals(TileType.End) && IsEndpointSet)
+                    {
+                        type = TileType.Water;
+                        tile = (int)TileType.Water;
+                    }
+
+                    if (type.Equals(TileType.Start)) SetStartPoint(x, y);
+                    if (type.Equals(TileType.End)) SetEndPoint(x, y);
+
+                    Tiles.SetTile(x, y, type);
+                    Renderer.DrawImageAtTile(x, y, tiles[tile]);
+                }
+            }
+        }
+
         public void GenerateWaterLandscape()
         {
             WriteableBitmap water = Tiles.GetWriteableBitmap(TileType.Water);
             Tiles.SetAllTiles(TileType.Water);
+
             ResetStartPoint();
             ResetEndPoint();
 
@@ -66,7 +99,6 @@ namespace Wayfinder.Model
             Random rnd = new Random();
             int rndnum;
 
-            //Später beachten ob ein Tile das Starttile ist
             ResetStartPoint();
             ResetEndPoint();
 
@@ -122,7 +154,7 @@ namespace Wayfinder.Model
                         Renderer.DrawImageAtTile(x, y, land);
                         Tiles.SetTile(x, y, TileType.Land);
                     }
-                    else if (g > 0.89)
+                    else if (g >= 0.89)
                     {
                         Renderer.DrawImageAtTile(x, y, tree);
                         Tiles.SetTile(x, y, TileType.Forest);
@@ -177,10 +209,12 @@ namespace Wayfinder.Model
                 Renderer.DrawImageAtTile(_row2 + 1, _col2 + 1, Tiles.GetWriteableBitmap(TileType.Start));
             }
         }
+
         public void ResetTile(int _row, int _col)
         {
             Renderer.DrawImageAtTile(_row + 1, _col + 1, Tiles.GetWriteableBitmap(Tiles.Tiles[_row, _col].Type));
         }
+
         public void ResetPath(List<Node>? _path)
         {
             if (_path == null) return;
@@ -285,6 +319,11 @@ namespace Wayfinder.Model
         {
             IsEndpointSet = false;
             EndPointPosition = null;
+        }
+
+        public TileHandler GetTileHandler()
+        {
+            return Tiles;
         }
     }
 }

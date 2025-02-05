@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -251,6 +252,44 @@ namespace Wayfinder.ViewModel
             }
             ResetPath();
             Handler.ChangePathfinderalgorithm(finder);
+        }
+
+        [RelayCommand]
+        public void OnSaveLandscape()
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+
+            dialog.Filter = "Wayfinder File (*.wy)|*.wy";
+
+            if (dialog.ShowDialog() == true && dialog.FileName != null)
+            {
+                SaveFileHandler.SaveFile(Handler.GetTileHandler().Tiles, dialog.FileName);
+            }
+        }
+
+        [RelayCommand]
+        public void OnLoadLandscape()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+
+            dialog.Filter = "Wayfinder File (*.wy)|*.wy";
+
+            if (dialog.ShowDialog() == true && dialog.FileName != null)
+            {
+                int[,]? tiles = LoadFileHandler.LoadFile(dialog.FileName);
+
+                if (tiles != null)
+                {
+                    Handler = new LandscapeHandler(tiles.GetLength(0), tiles.GetLength(1), 8, 8, 1);
+                    SetLandscapeToImageControl();
+                    AddTiles(LoadDefaultTiles());
+
+                    Handler.GenerateLandscapeFromFile(tiles);
+
+                    Path = null;
+                    ResetPath();
+                }
+            }
         }
 
         [RelayCommand]

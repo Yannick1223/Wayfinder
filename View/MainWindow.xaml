@@ -13,9 +13,8 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datei">
-
-                <MenuItem Header="Speichern" Command=""/>
-                <MenuItem Header="Laden" Command=""/>
+                <MenuItem Header="Speichern" Command="{Binding SaveLandscapeCommand}"/>
+                <MenuItem Header="Laden" Command="{Binding LoadLandscapeCommand}"/>
             </MenuItem>
             <MenuItem Header="Generieren">
                 <MenuItem Header="Neue Landschaft" Command="{Binding GenerateNewLandscapeCommand}"></MenuItem>
@@ -36,7 +35,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-
+            
             <ListBox x:Name="TileSelection" 
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      SelectionMode="Single"
