@@ -12,9 +12,9 @@
     <StackPanel>
         <TextBlock Text="Neue Landschaft erstellen" Margin="0 0 0 40"></TextBlock>
         <TextBlock Text="Breite: "></TextBlock>
-        <xctk:SingleUpDown Minimum="1" Maximum="150" Value="{Binding Rows}"></xctk:SingleUpDown>
+        <xctk:SingleUpDown Minimum="1" Maximum="100" Value="{Binding Rows}"></xctk:SingleUpDown>
         <TextBlock Text="Höhe: "></TextBlock>
-        <xctk:SingleUpDown Minimum="1" Maximum="150" Value="{Binding Columns}"></xctk:SingleUpDown>
+        <xctk:SingleUpDown Minimum="1" Maximum="100" Value="{Binding Columns}"></xctk:SingleUpDown>
         <Button Content="Neu erstellen" Command="{Binding SubmitCommand}"></Button>
         <Button Content="Abbrechen" Command="{Binding CancelCommand}"></Button>
     </StackPanel>

@@ -20,8 +20,6 @@ namespace Wayfinder.ViewModel
         public GenerateNewLandscapePopupViewModel(Window _popup)
         {
             Title = "Landschaft erstellen";
-            Rows = 1;
-            Columns = 1;
 
             Popup = _popup;
         }

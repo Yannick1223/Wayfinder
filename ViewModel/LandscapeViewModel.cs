@@ -197,7 +197,7 @@ namespace Wayfinder.ViewModel
 
             if (closed)
             {
-                if(dialog.GeneratorVM.Rows.HasValue && dialog.GeneratorVM.Columns.HasValue)
+                if (dialog.GeneratorVM.Rows.HasValue && dialog.GeneratorVM.Columns.HasValue)
                 {
                     Handler = new LandscapeHandler(dialog.GeneratorVM.Rows.Value, dialog.GeneratorVM.Columns.Value, 8, 8, 1);
                     SetLandscapeToImageControl();
@@ -221,6 +221,13 @@ namespace Wayfinder.ViewModel
         {
             ResetPath();
             Handler.GenerateSimplexNoiselandscape();
+        }
+
+        [RelayCommand]
+        public void OnGenerateMazeLandscape()
+        {
+            ResetPath();
+            Handler.GenerateMazeLandscape();
         }
 
         [RelayCommand]

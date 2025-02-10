@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wayfinder.Model.Noise
+namespace Wayfinder.Model
 {
     public struct Vector2D
     {

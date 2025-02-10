@@ -80,6 +80,7 @@ namespace Wayfinder.Model
                     result.Add(new Node(x, y));
                 }
             }
+
             return result;
         }
 

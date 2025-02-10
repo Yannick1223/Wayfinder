@@ -8,7 +8,6 @@ using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
-using Wayfinder.Model.Noise;
 
 
 namespace Wayfinder.Model
@@ -112,6 +111,57 @@ namespace Wayfinder.Model
                     Tiles.SetTile(x, y, _tilesType[rndnum]);
                 }
             }
+        }
+
+        public void GenerateMazeLandscape()
+        {
+            WriteableBitmap land = Tiles.GetWriteableBitmap(TileType.Land);
+            WriteableBitmap start = Tiles.GetWriteableBitmap(TileType.Start);
+            WriteableBitmap end = Tiles.GetWriteableBitmap(TileType.End);
+
+            int mazeX = (Renderer.Rows % 2 == 0)? (int)(Renderer.Rows / 2) : (int)(Renderer.Rows / 2 + 1);
+            int mazeY = (Renderer.Columns % 2 == 0)? (int)(Renderer.Columns / 2) : (int)(Renderer.Columns / 2 + 1);
+
+            OriginShift shift = new OriginShift();
+            Vector2D[,]? maze = shift.GenerateMaze(mazeX, mazeY, 25);
+
+            if (maze == null) return;
+
+            GenerateWaterLandscape();
+
+            ResetStartPoint();
+            ResetEndPoint();
+
+            for (int y = 0; y < maze.GetLength(1); y++)
+            {
+                for (int x = 0; x < maze.GetLength(0); x++)
+                {
+                    int x1 = 2 * x + 1; 
+                    int y1 = 2 * y + 1;
+
+                    if (x1 > Renderer.Rows || y1 > Renderer.Columns) continue;
+
+                    Renderer.DrawImageAtTile(x1, y1, land);
+                    Tiles.SetTile(x1, y1, TileType.Land);
+
+                    int x2 = 2 * x + 1 + (int)maze[x, y].X; 
+                    int y2 = 2 * y + 1 + (int)maze[x, y].Y;
+
+                    if (x2 > Renderer.Rows || y2 > Renderer.Columns) continue;
+
+                    Renderer.DrawImageAtTile(x2, y2, land);
+                    Tiles.SetTile(x2, y2, TileType.Land);
+                }
+            }
+
+            //Set Startpoint to the begining of the Maze and the Endpoint to the end of the Maze
+            SetStartPoint(1, 1);
+            Renderer.DrawImageAtTile(1, 1, start);
+            Tiles.SetTile(1, 1, TileType.Start);
+
+            SetEndPoint(2 * mazeX - 1, 2 * mazeY - 1);
+            Renderer.DrawImageAtTile(2 * mazeX - 1, 2 * mazeY - 1, end);
+            Tiles.SetTile(2 * mazeX - 1, 2 * mazeY - 1, TileType.End);
         }
 
         public void GenerateSimplexNoiselandscape()
