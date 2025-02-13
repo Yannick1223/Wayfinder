@@ -25,26 +25,29 @@
                        FontSize="20"
                        Margin="5 0 0 0"
                        Grid.Column="0"
-                       Grid.Row="0"></TextBlock>
+                       Grid.Row="0"
+                       ToolTip="Breite der Landschafft"></TextBlock>
             <xctk:SingleUpDown Minimum="1"
                                Width="100"
                                Grid.Column="1"
                                Grid.Row="0"
                                Maximum="100" 
-                               Value="{Binding Rows}"></xctk:SingleUpDown>
+                               Value="{Binding Rows}"
+                               ToolTip="Breite der Landschafft"></xctk:SingleUpDown>
 
             <TextBlock Text="Höhe: "
                        FontSize="20"
                        Margin="5 0 0 0"
                        Grid.Column="0"
                        Grid.Row="1"
-                       ></TextBlock>
+                       ToolTip="Höhe der Landschafft"></TextBlock>
             <xctk:SingleUpDown Minimum="1"
                                Width="100"
                                Grid.Column="1"
                                Grid.Row="1"
                                Maximum="100" 
-                               Value="{Binding Columns}"></xctk:SingleUpDown>
+                               Value="{Binding Columns}"
+                               ToolTip="Höhe der Landschafft"></xctk:SingleUpDown>
         </Grid>
 
         <Separator Margin="0 5"></Separator>

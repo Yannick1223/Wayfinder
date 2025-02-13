@@ -13,14 +13,25 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datei">
-                <MenuItem Header="Speichern" Command="{Binding SaveLandscapeCommand}"/>
-                <MenuItem Header="Laden" Command="{Binding LoadLandscapeCommand}"/>
+                <MenuItem Header="Speichern" 
+                          ToolTip="Landschafft speichern"
+                          Command="{Binding SaveLandscapeCommand}"/>
+                <MenuItem Header="Laden" 
+                          ToolTip="Laden einer .wy"
+                          Command="{Binding LoadLandscapeCommand}"/>
             </MenuItem>
             <MenuItem Header="Generieren">
-                <MenuItem Header="Neue Landschaft" Command="{Binding GenerateNewLandscapeCommand}"></MenuItem>
-                <MenuItem Header="Zufällige Landschafft" Command="{Binding GenerateRandomLandscapeCommand}"></MenuItem>
-                <MenuItem Header="Labyrinth Landschafft" Command="{Binding GenerateMazeLandscapeCommand}"></MenuItem>
-                <MenuItem Header="Simplex Noise Landschafft" Command="{Binding GenerateNoiseLandscapeCommand}"></MenuItem>
+                <MenuItem Header="Neue Landschaft" 
+                          Command="{Binding GenerateNewLandscapeCommand}"></MenuItem>
+                <MenuItem Header="Zufällige Landschafft" 
+                          ToolTip="Erstellt eine Landschafft mit Zufällig Ausgewählten Kacheln."
+                          Command="{Binding GenerateRandomLandscapeCommand}"></MenuItem>
+                <MenuItem Header="Labyrinth Landschafft" 
+                          ToolTip="Erstellt ein perfektes Labyrinth."
+                          Command="{Binding GenerateMazeLandscapeCommand}"></MenuItem>
+                <MenuItem Header="Simplex Noise Landschafft" 
+                          ToolTip="Erstellt eine Landschafft mithilfe von Noise."
+                          Command="{Binding GenerateNoiseLandscapeCommand}"></MenuItem>
             </MenuItem>
             <!--
             <MenuItem Header="Suchverfahren">
@@ -72,7 +83,8 @@
                 <TextBlock Text="{Binding SelectedPathfindingAlgorithm}" 
                            FontSize="30" 
                            FontWeight="Medium"
-                           HorizontalAlignment="Center"></TextBlock>
+                           HorizontalAlignment="Center"
+                           ToolTip="Aktueller Suchalgorithmus"></TextBlock>
                 <Separator Margin="5 0"></Separator>
                 
 
@@ -88,7 +100,8 @@
                             Height="20"
                             HorizontalAlignment="Left"
                             Margin="10 0 0 0"
-                            Command="{Binding ResetCommand}">
+                            Command="{Binding ResetCommand}"
+                            ToolTip="Zurück zum Anfang.">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="15"/>
@@ -107,7 +120,8 @@
                             Height="20"
                             HorizontalAlignment="Right"
                             Margin="0 0 10 0"
-                            Command="{Binding TimeNextPathCommand}">
+                            Command="{Binding TimeNextPathCommand}"
+                            ToolTip="Gehe automatisch ein Feld nach vorne.">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="15"/>
@@ -129,7 +143,8 @@
                                   Width="100"
                                   Height="25" 
                                   Margin="0 0 5 0"
-                                  HorizontalAlignment="Right">
+                                  HorizontalAlignment="Right"
+                                  ToolTip="Gehe ein Feld zurück.">
                         <RepeatButton.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="15"/>
@@ -144,7 +159,8 @@
                                   Width="100"
                                   Height="25" 
                                   Margin="5 0 0 0"
-                                  HorizontalAlignment="Left">
+                                  HorizontalAlignment="Left"
+                                  ToolTip="Gehe ein Feld weiter.">
                         <RepeatButton.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="15"/>
@@ -157,7 +173,8 @@
                         Margin="15 15 15 10"
                         Height="50"
                         FontSize="20"
-                        Command="{Binding CalculatePathCommand}">
+                        Command="{Binding CalculatePathCommand}"
+                        ToolTip="Berechne einen Weg vom Startpunkt zum Endpunkt.">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="15"/>
@@ -214,7 +231,8 @@
                     <TextBlock Text="{Binding ZoomText}" 
                                Grid.Column="0" 
                                Height="20" 
-                               Padding="0 0 5 0"></TextBlock>
+                               Padding="0 0 5 0"
+                               ToolTip="Aktueller Zoom"></TextBlock>
                     
                     <RepeatButton Content="-" 
                             Width="20" 
