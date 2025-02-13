@@ -8,14 +8,75 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewModel:GenerateNewLandscapePopupViewModel}"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="480" Width="270">
+        Title="{Binding Title}" Height="145" Width="279" Icon="/Assets/Logo.jpg">
     <StackPanel>
-        <TextBlock Text="Neue Landschaft erstellen" Margin="0 0 0 40"></TextBlock>
-        <TextBlock Text="Breite: "></TextBlock>
-        <xctk:SingleUpDown Minimum="1" Maximum="100" Value="{Binding Rows}"></xctk:SingleUpDown>
-        <TextBlock Text="Höhe: "></TextBlock>
-        <xctk:SingleUpDown Minimum="1" Maximum="100" Value="{Binding Columns}"></xctk:SingleUpDown>
-        <Button Content="Neu erstellen" Command="{Binding SubmitCommand}"></Button>
-        <Button Content="Abbrechen" Command="{Binding CancelCommand}"></Button>
+        
+        <Grid Margin="0 5 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Breite: " 
+                       FontSize="20"
+                       Margin="5 0 0 0"
+                       Grid.Column="0"
+                       Grid.Row="0"></TextBlock>
+            <xctk:SingleUpDown Minimum="1"
+                               Width="100"
+                               Grid.Column="1"
+                               Grid.Row="0"
+                               Maximum="100" 
+                               Value="{Binding Rows}"></xctk:SingleUpDown>
+
+            <TextBlock Text="Höhe: "
+                       FontSize="20"
+                       Margin="5 0 0 0"
+                       Grid.Column="0"
+                       Grid.Row="1"
+                       ></TextBlock>
+            <xctk:SingleUpDown Minimum="1"
+                               Width="100"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               Maximum="100" 
+                               Value="{Binding Columns}"></xctk:SingleUpDown>
+        </Grid>
+
+        <Separator Margin="0 5"></Separator>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Button Content="Neu erstellen" 
+                    Grid.Column="0"
+                    Margin="5"
+                    Command="{Binding SubmitCommand}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Content="Abbrechen" 
+                    Grid.Column="1"
+                    Margin="5"
+                    Command="{Binding CancelCommand}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </Grid>
+        
     </StackPanel>
 </Window>

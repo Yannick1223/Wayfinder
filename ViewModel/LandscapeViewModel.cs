@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Wayfinder.Model;
 using Wayfinder.View;
 
@@ -38,6 +39,8 @@ namespace Wayfinder.ViewModel
 
         private Slider ZoomSlider { get; set; }
 
+        DispatcherTimer PathTimmer {  get; set; }
+
         [ObservableProperty]
         public string selectedPathfindingAlgorithm;
 
@@ -47,6 +50,9 @@ namespace Wayfinder.ViewModel
             SelectedPathfindingAlgorithm = "A Stern";
             PathFoundText = "0/0";
             PathIndex = 0;
+            PathTimmer = new DispatcherTimer();
+            PathTimmer.Interval = TimeSpan.FromMilliseconds(100);
+            PathTimmer.Tick += PathTimmer_Tick;
 
             Handler = new LandscapeHandler(20, 20, 8, 8, 1);
             ObservableTileInformation = new ObservableCollection<TileInformation>();
@@ -145,8 +151,6 @@ namespace Wayfinder.ViewModel
             bool moveAwayFromStartPoint = PathIndex == 1;
 
             Handler.VisitTile(Path[PathIndex - 1].X, Path[PathIndex - 1].Y, Path[PathIndex].X, Path[PathIndex].Y, moveAwayFromStartPoint);
-
-            //Handler.VisitTile(Path[PathIndex - 1].X + 1, Path[PathIndex - 1].Y + 1, Path[PathIndex].X + 1, Path[PathIndex].Y + 1, moveToStartPoint);
         }
 
         [RelayCommand]
@@ -157,19 +161,64 @@ namespace Wayfinder.ViewModel
             PathIndex = Math.Clamp(PathIndex - 1, 0, Path.Count - 1);
             PathFoundText = $"{PathIndex}/{Path.Count - 1}";
 
-            //bool moveToStartPoint = PathIndex == 0;
-
             Handler.VisitTile(Path[PathIndex + 1].X, Path[PathIndex + 1].Y, Path[PathIndex].X, Path[PathIndex].Y, false);
+        }
 
-            //Handler.VisitTile(Path[PathIndex + 1].X + 1, Path[PathIndex + 1].Y + 1, Path[PathIndex].X + 1, Path[PathIndex].Y + 1, moveToStartPoint);
+        [RelayCommand]
+        public void OnReset()
+        {
+            if (PathIndex != 0 && Path != null)
+            {
+                Handler.ResetTile(Path[0].X, Path[0].Y);
+                Handler.ResetTile(Path[PathIndex].X, Path[PathIndex].Y);
+                PathIndex = 0;
+                PathFoundText = $"0/{Path.Count - 1}";
+            }
+
+            if (PathTimmer.IsEnabled)
+            {
+                PathTimmer.Stop();
+            }
+        }
+
+        [RelayCommand]
+        public void OnTimeNextPath()
+        {
+            if (Path == null) return;
+
+            if (PathTimmer.IsEnabled)
+            {
+                PathTimmer.Stop();
+            }
+            else
+            {
+                PathTimmer.Start();
+            }
+        }
+
+        private void PathTimmer_Tick(object? sender, EventArgs e)
+        {
+            if (Path == null) return;
+
+            OnNextPath();
+
+            if (PathIndex == Path.Count - 1)
+            {
+                PathTimmer.Stop();
+            }
         }
 
         private void ResetPath()
         {
-            if(PathIndex != 0 && Path != null)
+            if (PathIndex != 0 && Path != null)
             {
                 Handler.ResetTile(Path[0].X, Path[0].Y);
                 Handler.ResetTile(Path[PathIndex].X, Path[PathIndex].Y);
+            }
+
+            if (PathTimmer.IsEnabled)
+            {
+                PathTimmer.Stop();
             }
 
             PathIndex = 0;
@@ -195,17 +244,13 @@ namespace Wayfinder.ViewModel
 
             bool closed = dialog.ShowDialog().Equals(false);
 
-            if (closed)
+            if (closed && dialog.GeneratorVM.Rows.HasValue && dialog.GeneratorVM.Columns.HasValue && dialog.GeneratorVM.Submited)
             {
-                if (dialog.GeneratorVM.Rows.HasValue && dialog.GeneratorVM.Columns.HasValue)
-                {
-                    Handler = new LandscapeHandler(dialog.GeneratorVM.Rows.Value, dialog.GeneratorVM.Columns.Value, 8, 8, 1);
-                    SetLandscapeToImageControl();
-                    AddTiles(LoadDefaultTiles());
-                    Handler.GenerateWaterLandscape();
-                    ResetPath();
-                }
-                Console.WriteLine();
+                Handler = new LandscapeHandler(dialog.GeneratorVM.Rows.Value, dialog.GeneratorVM.Columns.Value, 8, 8, 1);
+                SetLandscapeToImageControl();
+                AddTiles(LoadDefaultTiles());
+                Handler.GenerateWaterLandscape();
+                ResetPath();
             }
         }
 

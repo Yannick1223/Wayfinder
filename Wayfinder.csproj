@@ -16,6 +16,7 @@
     <None Remove="Assets\Forest.jpg" />
     <None Remove="Assets\Grass.jpg" />
     <None Remove="Assets\Land.jpg" />
+    <None Remove="Assets\Logo.jpg" />
     <None Remove="Assets\Sand.jpg" />
     <None Remove="Assets\Snow.jpg" />
     <None Remove="Assets\Water.jpg" />
@@ -37,6 +38,7 @@
     <Resource Include="Assets\Forest.jpg" />
     <Resource Include="Assets\Grass.jpg" />
     <Resource Include="Assets\Land.jpg" />
+    <Resource Include="Assets\Logo.jpg" />
     <Resource Include="Assets\Sand.jpg" />
     <Resource Include="Assets\Snow.jpg" />
     <Resource Include="Assets\Startpoint.jpg" />

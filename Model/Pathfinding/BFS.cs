@@ -8,6 +8,6 @@ namespace Wayfinder.Model
 {
     public class BFS: Pathfinder
     {
-
+        
     }
 }

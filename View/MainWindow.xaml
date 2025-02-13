@@ -9,7 +9,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewModel:LandscapeViewModel}"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="1080" Width="1920">
+        Title="{Binding Title}" Height="1080" Width="1920" Icon="/Assets/Logo.jpg" >
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datei">
@@ -22,13 +22,14 @@
                 <MenuItem Header="Labyrinth Landschafft" Command="{Binding GenerateMazeLandscapeCommand}"></MenuItem>
                 <MenuItem Header="Simplex Noise Landschafft" Command="{Binding GenerateNoiseLandscapeCommand}"></MenuItem>
             </MenuItem>
+            <!--
             <MenuItem Header="Suchverfahren">
                 <MenuItem Header="A*" Command="{Binding ChangePathfindingAlgorithmCommand}" CommandParameter="AStar"/>
                 <MenuItem Header="Dijkstra" Command="{Binding ChangePathfindingAlgorithmCommand}" CommandParameter="Dijkstra"/>
                 <MenuItem Header="BFS" Command="{Binding ChangePathfindingAlgorithmCommand}" CommandParameter="BFS"/>
                 <MenuItem Header="DFS" Command="{Binding ChangePathfindingAlgorithmCommand}" CommandParameter="DFS"/>
             </MenuItem>
-
+            -->
         </Menu>
 
         <Grid DockPanel.Dock="Right">
@@ -36,7 +37,6 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            
             <ListBox x:Name="TileSelection" 
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      SelectionMode="Single"
@@ -69,30 +69,110 @@
             </ListBox>
 
             <StackPanel Grid.Row="1">
-                <TextBlock Text="{Binding SelectedPathfindingAlgorithm}" FontSize="20" HorizontalAlignment="Center" Margin="0 0 0 10"></TextBlock>
+                <TextBlock Text="{Binding SelectedPathfindingAlgorithm}" 
+                           FontSize="30" 
+                           FontWeight="Medium"
+                           HorizontalAlignment="Center"></TextBlock>
+                <Separator Margin="5 0"></Separator>
+                
+
+                <Grid Margin="0 0 0 35">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" 
+                            Content="Reset"
+                            Width="75"
+                            Height="20"
+                            HorizontalAlignment="Left"
+                            Margin="10 0 0 0"
+                            Command="{Binding ResetCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="15"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <TextBlock Text="{Binding PathFoundText}" 
+                               Grid.Column="1"
+                               FontSize="20"
+                               HorizontalAlignment="Center"></TextBlock>
+
+                    <Button Grid.Column="2" 
+                            Content="Automatisch"
+                            Width="75"
+                            Height="20"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 10 0"
+                            Command="{Binding TimeNextPathCommand}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="15"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                </Grid>
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <RepeatButton Interval="50" Grid.Column="0" Content="Zurück" Command="{Binding PreviousPathCommand}" Height="20" HorizontalAlignment="Right"></RepeatButton>
-                    <TextBlock Text="{Binding PathFoundText}" Margin="5 0" Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
-                    <RepeatButton Interval="50" Grid.Column="2" Content="Nächster" Command="{Binding NextPathCommand}" Height="20" HorizontalAlignment="Left"></RepeatButton>
+                    <RepeatButton Interval="50" 
+                                  Grid.Column="0" 
+                                  Content="Zurück" 
+                                  Command="{Binding PreviousPathCommand}" 
+                                  Width="100"
+                                  Height="25" 
+                                  Margin="0 0 5 0"
+                                  HorizontalAlignment="Right">
+                        <RepeatButton.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="15"/>
+                            </Style>
+                        </RepeatButton.Resources>
+                    </RepeatButton>
+                    
+                    <RepeatButton Interval="50" 
+                                  Grid.Column="1" 
+                                  Content="Nächster" 
+                                  Command="{Binding NextPathCommand}" 
+                                  Width="100"
+                                  Height="25" 
+                                  Margin="5 0 0 0"
+                                  HorizontalAlignment="Left">
+                        <RepeatButton.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="15"/>
+                            </Style>
+                        </RepeatButton.Resources>
+                    </RepeatButton>
                 </Grid>
+                
                 <Button Content="Weg suchen"
-                        Margin="5 10 5 5"
+                        Margin="15 15 15 10"
                         Height="50"
-                        Command="{Binding CalculatePathCommand}"></Button>
+                        FontSize="20"
+                        Command="{Binding CalculatePathCommand}">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
             </StackPanel>
         </Grid>
 
 
 
-        <Border BorderThickness="1"
-                            BorderBrush="Black"
-                            CornerRadius="10"
-                            Padding="5">
+        <Border BorderThickness="2"
+                BorderBrush="Black"
+                CornerRadius="10"
+                Padding="5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -102,19 +182,20 @@
 
                 <ScrollViewer HorizontalScrollBarVisibility="auto"
                               VerticalScrollBarVisibility="auto"
-                              Padding="10">
+                              Padding="5">
                     <Image x:Name="Landscape" 
                            SnapsToDevicePixels="True">
                         <behaviors:Interaction.Triggers>
                             <behaviors:EventTrigger EventName="MouseMove">
                                 <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
-                                                   PassEventArgsToCommand="True"/>
+                                                               PassEventArgsToCommand="True"/>
                             </behaviors:EventTrigger>
                             <behaviors:EventTrigger EventName="MouseDown">
                                 <behaviors:InvokeCommandAction Command="{Binding HoverOverImageCommand}"
-                                                   PassEventArgsToCommand="True"/>
+                                                               PassEventArgsToCommand="True"/>
                             </behaviors:EventTrigger>
                         </behaviors:Interaction.Triggers>
+                        
                         <Image.LayoutTransform>
                             <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"></ScaleTransform>
                         </Image.LayoutTransform>
@@ -134,6 +215,7 @@
                                Grid.Column="0" 
                                Height="20" 
                                Padding="0 0 5 0"></TextBlock>
+                    
                     <RepeatButton Content="-" 
                             Width="20" 
                             Height="20" 
@@ -145,6 +227,7 @@
                             </Style>
                         </RepeatButton.Resources>
                     </RepeatButton>
+                    
                     <Slider x:Name="ZoomSlider"
                             Grid.Column="2"
                             Minimum="1" 
@@ -152,7 +235,7 @@
                             Value="7.5"
                             Width="250"
                             Height="20"
-                            Margin="5 0">
+                            Margin="3 0">
                         <behaviors:Interaction.Triggers>
                             <behaviors:EventTrigger EventName="ValueChanged">
                                 <behaviors:InvokeCommandAction Command="{Binding ZoomWithSliderCommand}"
@@ -160,11 +243,13 @@
                             </behaviors:EventTrigger>
                         </behaviors:Interaction.Triggers>
                     </Slider>
+                    
                     <RepeatButton Content="+" 
-                            Width="20" 
-                            Height="20" 
-                            Grid.Column="3"
-                            Command="{Binding ZoomInLandscapeCommand}">
+                                  Width="20" 
+                                  Height="20" 
+                                  Grid.Column="3"
+                                  Margin="0 0 5 0"
+                                  Command="{Binding ZoomInLandscapeCommand}">
                         <RepeatButton.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="10"/>

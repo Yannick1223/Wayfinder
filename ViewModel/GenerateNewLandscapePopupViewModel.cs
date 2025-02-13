@@ -15,11 +15,14 @@ namespace Wayfinder.ViewModel
         public int? rows;
         [ObservableProperty]
         public int? columns;
+        [ObservableProperty]
+        public bool submited;
 
         private Window Popup;
         public GenerateNewLandscapePopupViewModel(Window _popup)
         {
             Title = "Landschaft erstellen";
+            Submited = false;
 
             Popup = _popup;
         }
@@ -27,6 +30,7 @@ namespace Wayfinder.ViewModel
         [RelayCommand]
         public void OnSubmit()
         {
+            Submited = true;
             Popup.Close();
         }
 
@@ -35,6 +39,7 @@ namespace Wayfinder.ViewModel
         {
             Rows = null;
             Columns = null;
+            Submited = false;
             Popup.Close();
         }
     }
