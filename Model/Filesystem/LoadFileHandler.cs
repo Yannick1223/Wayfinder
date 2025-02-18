@@ -15,7 +15,15 @@ namespace Wayfinder.Model
         {
             string[]? lines = GetLines(_path);
 
+            if (_path.Split('.').Last().ToLower() != "wy")
+            {
+                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
+                return null;
+            }
+
             if (lines == null) return null;
+
+            
 
             int? width = FromFileGetWidth(lines[0]);
             int? height = FromFileGetHeight(lines[0]);
