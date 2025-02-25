@@ -15,18 +15,21 @@ namespace Wayfinder.Model
         {
             string[]? lines = GetLines(_path);
 
-            if (_path.Split('.').Last().ToLower() != "wy")
+            if (_path.Split('.').Last().ToLower() != "wy" || lines == null)
             {
                 MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
                 return null;
             }
 
-            if (lines == null) return null;
-
             int? width = FromFileGetWidth(lines[0]);
             int? height = FromFileGetHeight(lines[0]);
 
-            if (width == null || height == null || width < 1 || height < 1) return null;
+            if (width == null || height == null || width < 1 || height < 1)
+            {
+                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
+                return null;
+            }
+
             lines = lines.Skip(1).ToArray();
 
             int[,] tiles = new int[width.Value, height.Value];
@@ -42,7 +45,11 @@ namespace Wayfinder.Model
                 int? y = FromFileGetY(line);
                 int? id = FromFileGetTileID(line);
 
-                if (x == null || y == null || x < 0 || y < 0 || id == null) return null;
+                if (x == null || y == null || x < 0 || y < 0 || id == null)
+                {
+                    MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
+                    return null;
+                }
 
                 tiles[x.Value, y.Value] = id.Value;
             }
@@ -59,16 +66,11 @@ namespace Wayfinder.Model
 
         private static int? FromFileGetWidth(string _line)
         {
-            int? width;
+            int? width = null;
 
             if (int.TryParse(_line.Split('|')[0], out int _width))
             {
                 width = _width;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
-                width = null;
             }
 
             return width;
@@ -76,16 +78,11 @@ namespace Wayfinder.Model
 
         private static int? FromFileGetHeight(string _line)
         {
-            int? height;
+            int? height = null;
 
             if (int.TryParse(_line.Split('|')[1], out int _height))
             {
                 height = _height;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
-                height = null;
             }
 
             return height;
@@ -93,16 +90,11 @@ namespace Wayfinder.Model
 
         private static int? FromFileGetX(string _line)
         {
-            int? x;
+            int? x = null;
 
             if (int.TryParse(_line.Split(':')[0].Split(',')[0].Trim('('), out int xPos))
             {
                 x = xPos - 1;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
-                x = null;
             }
 
             return x;
@@ -110,16 +102,11 @@ namespace Wayfinder.Model
 
         private static int? FromFileGetY(string _line)
         {
-            int? y;
+            int? y = null;
 
             if (int.TryParse(_line.Split(':')[0].Split(',')[1].Trim(')'), out int yPos))
             {
                 y = yPos - 1;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
-                y = null;
             }
 
             return y;
@@ -127,16 +114,11 @@ namespace Wayfinder.Model
 
         private static int? FromFileGetTileID(string _line)
         {
-            int? id;
+            int? id = null;
 
             if (int.TryParse(_line.Split(':')[1], out int ID))
             {
                 id = ID;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim lesen der Datei.", "Fehler");
-                id = null;
             }
 
             return id;
